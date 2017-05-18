@@ -7,7 +7,12 @@
 uint8_t ADC_Read(uint8_t channel)
 {
 	uint8_t data;
+	uint8_t msb;
 	
+	ADMUX  |= (channel<<MUX0);
+	ADCSRA |= (1<<ADEN)|(1<<ADSC);		//ADC enable, ADC start conversion
+	data = ADCL;	//tomando dato
+	msb  = ADCH;	//leyendo ADCH para que ADC reciba nueva conversion
 	return data;
 }
 void ADC_Ini(void)
