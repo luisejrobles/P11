@@ -10,7 +10,7 @@ uint8_t ADC_Read(uint8_t channel)
 	uint8_t msb;
 	
 	ADMUX  |= (channel<<MUX0);
-	ADCSRA |= (1<<ADEN)|(1<<ADSC);		//ADC enable, ADC start conversion
+	ADCSRA |= (1<<ADSC);		//ADC enable, ADC start conversion
 	data = ADCL;	//tomando dato
 	msb  = ADCH;	//leyendo ADCH para que ADC reciba nueva conversion
 	return data;
@@ -20,7 +20,7 @@ void ADC_Ini(void)
 	/*  inicializa para 8 bits de resolución y habilita el ADC del microcontrolador de
 	forma generica. Encontrar el desplazamiento (offset) de la medición y almacenarla.*/
 	ADMUX  = (1<<REFS0);			//AVCC with external capacitor at AREF
-	ADCSRA = (1<<ADIE)|(7<<ADPS0);	//ADC enable, ADC interrupt enable, 128 PS
+	ADCSRA = (1<<ADEN)|(7<<ADPS0);	//ADC enable, ADC interrupt enable, 128 PS
 	ADC_Offset(0);
 }
 void ADC_MinMax( uint8_t channel )
@@ -42,12 +42,7 @@ void ADC_MinMax( uint8_t channel )
 void ADC_Offset(uint8_t channel)
 {
 	uint8_t msb;	//Desbloquear siguiente conversion
-	
-	ADMUX  |= (channel<<MUX0);
-	ADCSRA |= (1<<ADEN)|(1<<ADSC);		//ADC enable, ADC start conversion
-	offsetADC = ADCL;	//tomando dato
-	msb  = ADCH;	//leyendo ADCH para que ADC reciba nueva conversion
-	
+	offsetADC = ADC_Read(channel);
 }
 void Timer2_Set_Volume(uint8_t volume)
 {
