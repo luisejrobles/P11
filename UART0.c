@@ -5,6 +5,20 @@
 ring_buffer_t transmision;
 ring_buffer_t recepcion;
 
+void UART0_AutoBaudRate(void)
+{
+	DDRE = ~(1<<PE0);		//PE0 input
+	UCSR0A = (1<<U2X0);		//Double speed
+	UCSR0B = ((1<<RXEN0)|(1<<TXEN0))&(~(1<<UCSZ02)); // Reception enable | Transmission enable | 9bit disable
+	UCSR0C = (3<<UCSZ00);	//8bit enable
+	TCCR0A = 0;				//Normal Mode
+	TCCR0B = 2;				//8 PS
+	while(PINE& (1<<PE0));	//Loop mientras haya 1
+	TCNT0 = 0;				//Inicializa contador
+	while(!(PINE&(1<<PE0)));//Loop mientras no sea en alto
+	TCCR0B = 0;
+	UBRR0 = TCNT0 - 1;		//Setting Baud Rate
+}
 char UART0_getchar( void )
 {
 	while(BUFFER_EMPTY(recepcion));							//loop mientras el buffer se encuentre vacío
