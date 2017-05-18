@@ -12,7 +12,7 @@ Timer.d Timer.o: .././Timer.c \
  d:\program\ files\ (x86)\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\avr\version.h \
  d:\program\ files\ (x86)\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\avr\fuse.h \
  d:\program\ files\ (x86)\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\avr\lock.h \
- .././Timer.h .././UART.h
+ .././Timer.h .././UART0.h
 
 d:\program\ files\ (x86)\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\avr\interrupt.h:
 
@@ -42,4 +42,4 @@ d:\program\ files\ (x86)\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\avr\l
 
 .././Timer.h:
 
-.././UART.h:
+.././UART0.h:

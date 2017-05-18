@@ -40,7 +40,8 @@ C_SRCS +=  \
 ../ADC.c \
 ../main.c \
 ../Timer.c \
-../UART.c
+../Timer2.c \
+../UART0.c
 
 
 PREPROCESSING_SRCS += 
@@ -53,25 +54,29 @@ OBJS +=  \
 ADC.o \
 main.o \
 Timer.o \
-UART.o
+Timer2.o \
+UART0.o
 
 OBJS_AS_ARGS +=  \
 ADC.o \
 main.o \
 Timer.o \
-UART.o
+Timer2.o \
+UART0.o
 
 C_DEPS +=  \
 ADC.d \
 main.d \
 Timer.d \
-UART.d
+Timer2.d \
+UART0.d
 
 C_DEPS_AS_ARGS +=  \
 ADC.d \
 main.d \
 Timer.d \
-UART.d
+Timer2.d \
+UART0.d
 
 OUTPUT_FILE_PATH +=P11.elf
 
@@ -87,6 +92,8 @@ LINKER_SCRIPT_DEP+=
 
 
 # AVR32/GNU C Compiler
+
+
 
 
 

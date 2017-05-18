@@ -1,5 +1,5 @@
 #include "ADC.h"
-#include "UART.h"
+#include "UART0.h"
 #include <avr/io.h>
 #include <inttypes.h>
 #define ADC_Normalize( value ) (value*100)/max		//regla de 3 para encontrar el valor
@@ -50,5 +50,5 @@ void Timer2_Set_Volume(uint8_t volume)
 	OCR2B = (OCR2A*volume)/100;
 	itoa(volumenChar,volume,10);
 	UART0_puts("\n\rVolumen: ");
-	UART0_puts(volumenChar);`
+	UART0_puts(volumenChar);
 }

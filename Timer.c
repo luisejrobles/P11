@@ -3,7 +3,7 @@
 #include <inttypes.h>
 
 #include "Timer.h"
-#include "UART.h"
+#include "UART0.h"
 
 /*	Definir el macro que calcula los ticks en base
 	a al parametro de frecuencia (f). */

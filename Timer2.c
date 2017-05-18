@@ -1,7 +1,7 @@
 #include <avr/interrupt.h>
 #include <inttypes.h>
-#include "Clock.h"
-#include "UART.h"
+//#include "Clock.h"
+#include "UART0.h"
 
 static uint8_t Flag;
 static uint8_t base;
@@ -53,7 +53,7 @@ ISR (TIMER2_COMPA_vect)
 	base++;
 	if(Timer2_Flag())
 	{
-		Clock_Update(Flag);
-		Clock_Display();
+		//Clock_Update(Flag);
+		//Clock_Display();
 	}
 }
