@@ -1,4 +1,5 @@
 ﻿#include "Timer.h"
+#include "Timer2.h"
 #include "UART0.h"
 #include <avr/io.h>
 #include <inttypes.h>
@@ -6,7 +7,7 @@
 
 /*	Definir el macro que calcula los ticks en base
 	a al parametro de frecuencia (f). */
-#define TICKS(f) (16000000/256)/f
+#define TICKS(f) ((16000000/256)/f)
 
 const struct note *cancion;
 static volatile uint8_t secFlag;
@@ -31,7 +32,6 @@ void Timer0_Ini ( void ){
 	TIMSK0 = (1<<OCIE0A);	//Habilitando interrupcion
 	sei();					//Habilitando interrupciones gobales
 }
-
 ISR(TIMER0_COMPA_vect){ 
 	/* 	CÃ³digo para actualizar bandera de segundos */
 	static uint16_t mSeg;
@@ -57,7 +57,6 @@ ISR(TIMER0_COMPA_vect){
 		}
 	}		
 }
-
 void Timer2_Freq_Gen(uint8_t ticks){
 	/* 	Si "ticks" es mayor que 0 entonces, inicializa y habilita el Generador 
 		de Frecuencia del Timer2 con el tope dado por "ticks".
@@ -76,7 +75,6 @@ void Timer2_Freq_Gen(uint8_t ticks){
 		TCCR2B = 0;						//Deshabilitando el generador
 	}	
 }
-
 void Timer2_Play(const struct note song[],unsigned int len)
 {	
 	/*	FunciÃ³n que establece las condiciones necesarias para que
@@ -87,7 +85,6 @@ void Timer2_Play(const struct note song[],unsigned int len)
 	volumen = 50;			//Volumen a la mitad
 	DDRH |= (1<<DDH6);
 }
-
 void Timer2_Volume(int8_t direction){
 	/* 	Ajusta el ciclo de trabajo para incrementar o decrementar  el volumen
 	   	de las notas que se estan generando. */

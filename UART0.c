@@ -19,11 +19,6 @@ void UART0_AutoBaudRate(void)
 	TCCR0B = 0;
 	UBRR0 = TCNT0 - 1;		//Setting Baud Rate
 }
-char UART0_getchar( void )
-{
-	while(BUFFER_EMPTY(recepcion));					//loop mientras el buffer se encuentre vacío
-	return recepcion.buffer[recepcion.out_idx++];	//regresa el caracter de la posicion del buffer
-}
 ISR( USART0_RX_vect )	//Rx interrupt
 {
 	while(BUFFER_FULL(recepcion));	//Loop mientras buffer está lleno
@@ -39,13 +34,19 @@ ISR( USART0_UDRE_vect )	//Tx interrupt
 		UDR0 = transmision.buffer[transmision.out_idx++];	/* Manda el dato de la cola al UDR0*/
 	}
 }
-
 char UART0_getchar( void )
 {
 	while((BUFFER_EMPTY(transmision)));					/*	espera si no hay datos en la cola */
 	return transmision.buffer[transmision.out_idx++];			/*	Regrasa el dato				*/
 }
-
+uint8_t UART0_available( void )
+{
+	if(!BUFFER_FULL(recepcion))
+	{
+		return 1;	//si no está lleno
+	}
+	return 0;	//lleno
+}
 unsigned int atoi(char *str)
 {
 	unsigned int num = 0, exp = 1, val, count = 0;

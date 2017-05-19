@@ -1,6 +1,5 @@
 #include <avr/interrupt.h>
 #include <inttypes.h>
-//#include "Clock.h"
 #include "UART0.h"
 
 static uint8_t Flag;
