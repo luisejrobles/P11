@@ -1,6 +1,7 @@
 ﻿#include "Timer.h"
 #include "UART0.h"
 #include <avr/io.h>
+#include <inttypes.h>
 #include <avr/interrupt.h>
 
 /*	Definir el macro que calcula los ticks en base

@@ -6,7 +6,7 @@
 #define BUFFER_FULL(buffer) (buffer.in_idx == MOD(buffer.out_idx - 1))
 #define MOD(n) n&(BUFFER_SIZE-1)
 
-char UART0_getchar( void );
+char UART0_getchar( void )
 unsigned int atoi(char *str);
 uint8_t UART0_available( void );
 void UART0_AutoBaudRate(void);

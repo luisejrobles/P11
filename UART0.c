@@ -39,14 +39,13 @@ ISR( USART0_UDRE_vect )	//Tx interrupt
 		UDR0 = transmision.buffer[transmision.out_idx++];	/* Manda el dato de la cola al UDR0*/
 	}
 }
-uint8_t UART0_available( void )
+
+char UART0_getchar( void )
 {
-	if(!BUFFER_FULL(recepcion))
-	{
-		return 1;	//si no está lleno
-	}
-	return 0;	//lleno
+	while((BUFFER_EMPTY(transmision)));					/*	espera si no hay datos en la cola */
+	return transmision.buffer[transmision.out_idx++];			/*	Regrasa el dato				*/
 }
+
 unsigned int atoi(char *str)
 {
 	unsigned int num = 0, exp = 1, val, count = 0;
