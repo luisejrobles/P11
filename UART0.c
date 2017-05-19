@@ -21,19 +21,19 @@ void UART0_AutoBaudRate(void)
 }
 char UART0_getchar( void )
 {
-	while(BUFFER_EMPTY(recepcion));							//loop mientras el buffer se encuentre vacío
-	return recepcion.buffer[recepcion.out_idx++];			//regresa el caracter de la posicion del buffer
+	while(BUFFER_EMPTY(recepcion));					//loop mientras el buffer se encuentre vacío
+	return recepcion.buffer[recepcion.out_idx++];	//regresa el caracter de la posicion del buffer
 }
-ISR( USART0_RX_vect )										//Rx interrupt
+ISR( USART0_RX_vect )	//Rx interrupt
 {
-	while(BUFFER_FULL(recepcion));							//Loop mientras buffer está lleno
-	recepcion.buffer[recepcion.in_idx++] = UDR0;			//Metiendo el dato de UDR0 al  buffer
+	while(BUFFER_FULL(recepcion));	//Loop mientras buffer está lleno
+	recepcion.buffer[recepcion.in_idx++] = UDR0;	//Metiendo el dato de UDR0 al  buffer
 }
-ISR( USART0_UDRE_vect )										//Tx interrupt
+ISR( USART0_UDRE_vect )	//Tx interrupt
 {
 	if(BUFFER_EMPTY(transmision))
 	{
-		UCSR0B &= (~(1<<UDRIE0));							//Disable Tx interruption
+		UCSR0B &= (~(1<<UDRIE0));	//Disable Tx interruption
 	}else
 	{
 		UDR0 = transmision.buffer[transmision.out_idx++];	/* Manda el dato de la cola al UDR0*/
@@ -43,9 +43,9 @@ uint8_t UART0_available( void )
 {
 	if(!BUFFER_FULL(recepcion))
 	{
-		return 1;											//si no está lleno
+		return 1;	//si no está lleno
 	}
-	return 0;												//lleno
+	return 0;	//lleno
 }
 unsigned int atoi(char *str)
 {

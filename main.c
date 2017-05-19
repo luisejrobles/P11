@@ -1,6 +1,7 @@
 #include "UART0.h"
 #include "ADC.h"
 #include "Timer.h"
+#include <avr/interrupt.h>
 #include <avr/io.h>
 #define PHOTORESISTOR PORTA0
 
@@ -104,6 +105,8 @@ int main(void)
 	UART0_AutoBaudRate();
 	Timer0_Ini();
 	ADC_Ini();
+	UART0_putchar('m');
+	UART0_getchar();
 	ADC_MinMax(PHOTORESISTOR);
 	while(1){
 		if (UART0_available()){
@@ -114,4 +117,9 @@ int main(void)
 		Timer2_Set_Volume(ADC_Normalize(ADC_Read(PHOTORESISTOR)));
 	}
 	return 0;	
+	/*
+	UART0_puts("hey");
+	UART0_getchar();
+	UART0_puts("PUM");
+	*/
 }

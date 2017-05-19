@@ -10,6 +10,6 @@ static volatile uint16_t offsetADC;
 
 void ADC_Ini( void );
 void ADC_MinMax( uint8_t channel );
-void ADC_Offset( uint8_t channel );
+void ADC_Offset( );
 void Timer2_Set_Volume( uint8_t volume );
 uint8_t ADC_Read( uint8_t channel );
