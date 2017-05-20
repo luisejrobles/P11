@@ -1,173 +1,122 @@
 #include <avr/io.h>
 #include <avr/interrupt.h>
-#include "UART0.h"
 
-ring_buffer_t transmision;
-ring_buffer_t recepcion;
+#define BUFFER_SIZE 64
+#define MOD(n) n&(BUFFER_SIZE-1)
+#define IS_BUFFER_EMPTY(buffer) buffer.in_idx == buffer.out_idx
+#define IS_BUFFER_FULL(buffer) buffer.in_idx == MOD(buffer.out_idx - 1)
 
-void UART0_AutoBaudRate(void)
+typedef struct
 {
-	DDRE = ~(1<<PE0);		//PE0 input
-	UCSR0A = (1<<U2X0);		//Double speed
-	UCSR0B = ((1<<RXEN0)|(1<<TXEN0))&(~(1<<UCSZ02)); // Reception enable | Transmission enable | 9bit disable
-	UCSR0C = (3<<UCSZ00);	//8bit enable
-	TCCR0A = 0;				//Normal Mode
-	TCCR0B = 2;				//8 PS
-	while(PINE& (1<<PE0));	//Loop mientras haya 1
-	TCNT0 = 0;				//Inicializa contador
-	while(!(PINE&(1<<PE0)));//Loop mientras no sea en alto
-	TCCR0B = 0;
-	UBRR0 = TCNT0 - 1;		//Setting Baud Rate
-}
-ISR( USART0_RX_vect )	//Rx interrupt
-{
-	while(BUFFER_FULL(recepcion));	//Loop mientras buffer está lleno
-	recepcion.buffer[recepcion.in_idx++] = UDR0;	//Metiendo el dato de UDR0 al  buffer
-}
-ISR( USART0_UDRE_vect )	//Tx interrupt
-{
-	if(BUFFER_EMPTY(transmision))
-	{
-		UCSR0B &= (~(1<<UDRIE0));	//Disable Tx interruption
-	}else
-	{
-		UDR0 = transmision.buffer[transmision.out_idx++];	/* Manda el dato de la cola al UDR0*/
-	}
-}
-char UART0_getchar( void )
-{
-	while((BUFFER_EMPTY(transmision)));					/*	espera si no hay datos en la cola */
-	return transmision.buffer[transmision.out_idx++];			/*	Regrasa el dato				*/
-}
-uint8_t UART0_available( void )
-{
-	if(!BUFFER_FULL(recepcion))
-	{
-		return 1;	//si no está lleno
-	}
-	return 0;	//lleno
-}
-unsigned int atoi(char *str)
-{
-	unsigned int num = 0, exp = 1, val, count = 0;
-															//contando digitos en la cadena============
-	while(*str)
-	{
-		str++;
-		count++;
-	}
-	str--;													//no tomando en cuenta '\0'
-	while(count != 0 )
-	{
-		val = *str--;										//tomando el valor
-		val = val - '0';									//obteniendo valor crudo
-		if(val >=0 && val <=9)
-		{
-			num = num + (val * exp);						//almacenando valor crudo*exp en num
-			exp = exp*10;
-			count--;
-		}
-	}
-	return num;
-}
-void BUFFER_INIT(void)	//Inicializando los buffers
-{
-	recepcion.in_idx = 0;
-	recepcion.out_idx = 0;
-	transmision.in_idx = 0;
-	transmision.out_idx = 0;
-}
-void itoa(char *str, uint16_t number, uint8_t base)
-{
-	unsigned int cociente, residuo,count = 0, i=0, j;
-	char c;
-	cociente = number;
-	do{
-		residuo = cociente%base;
-		cociente = cociente/base;
-		if(residuo > 9)	//si es mayor a 9, agregar el respectivo para imprimir letra.
-		{
-			c = residuo + 55;
-			}else{
-			c = residuo + '0'; //agregar el respectivo para crear el caracter de numero
-		}
+	char buffer[BUFFER_SIZE];				/*	espacio reservado			*/
+	volatile unsigned char in_idx :6;		/*	indice entrada (Head)		*/
+	volatile unsigned char out_idx :6;		/*	indice entrada (tail)		*/
+} ring_buffer_t;
 
-		*str++ = c;
-		count++;
-	}while( cociente != 0 );
-	*str= '\0';
-	str -=count;
-	j = count -1;
-	//==============invertir cadena==================
-	while(i < j)
-	{
-		if( *(str+i) != *(str+j))
-		{
-			c = *(str+i);
-			*(str+i) = *(str+j);
-			*(str+j) = c;
-		}
-		i++;
-		j--;
-	}
-}
-void UART0_Ini(uint16_t mode)
+ring_buffer_t bufferRx;
+ring_buffer_t bufferTx;
+
+void UART0_Ini( void )
 {
-		/*Función para inicializar el puerto serie del ATmega1280/2560 
-	  Si mode es 0    9600,8,N,1
-	  Si mode es 1    19200,8,N,1 */
-	UCSR0A = (1<<U2X0);		//Usart double speed
-	UCSR0B = ( (1<<RXEN0)|(1<<TXEN0)|(1<<RXCIE0) ) & (~(1<<UCSZ02)); // Reception enable | Transmission enable | 9bit disable| RX interruption enable
-	UCSR0C = (3<<UCSZ00);	//8bit enable
-	if(!mode)
-	{
-		UBRR0 = 207;	//9600 baud rate UBRR
-	}else if(mode)
-	{
-		UBRR0 = 103;	//19.2k baud rate UBRR
-	}
-	sei();	//Interupciones globales
-	BUFFER_INIT();
+	UCSR0A = 1<<U2X0;					//doble velocidad asincrona UART0
+	UCSR0B = (1<<RXEN0)|(1<<TXEN0);		/*		transmision, recepcion     */
+	UCSR0C = (3<<UCSZ00);
+	sei();								/*		Ativa las interrupciones glovales						*/
+	
+	UCSR0B|=(1<<RXCIE0);		/*		Activa interrupcion de recepcion completa				*/
+	bufferRx.in_idx = 0;
+	bufferRx.out_idx = 0;
+	bufferTx.in_idx = 0;
+	bufferTx.out_idx = 0;
 }
-void UART0_gets(char *str)
-{
-	unsigned char c;
-	unsigned int i=0;
-	do{
-		c = UART0_getchar();
-		if( (i<=18)&&(c!=8)&&(c!=13) )	//validacion menor al fin del arreglo, backspace y enter
-		{
-			UART0_putchar(c);
-			*str++ = c;
-			i++;
-		}
-		if( (c==8) && (i>0) )		//validacion backspace
-		{
-			UART0_putchar('\b');
-			UART0_putchar(' ');
-			UART0_putchar(8);
-			*str--='\0';
-			i--;
-		}
-	}while(c != 13);
-	*str = '\0';
-}
+
 void UART0_putchar(char data)
 {
-	while(BUFFER_FULL(transmision));				//loop mientras el buffer esté lleno
+	while((IS_BUFFER_FULL(bufferTx)));				/* espera si la cola esta llena*/
 	
-	if(BUFFER_EMPTY(transmision))					//si buffer está vacío
+	if(IS_BUFFER_EMPTY(bufferTx))					/* si la cola esta vacia */
 	{
-		transmision.buffer[transmision.in_idx++] = data;  //ingreso dato al buffer para que lo capte la interrupcion
-		UCSR0B |= (1<<UDRIE0);				//Tx interrupt enable
+		bufferTx.buffer[bufferTx.in_idx++] = data;  /* ingresa el dato en la cabeza y aumenta*/
+		UCSR0B = UCSR0B|(1<<UDRIE0);				/* Activar interrupcion Transmision completa*/
 	}
 	else
 	{
-		transmision.buffer[transmision.in_idx++] = data;  /*ingresa el dato en la cabeza y aumenta*/
+		bufferTx.buffer[bufferTx.in_idx++] = data;  /*ingresa el dato en la cabeza y aumenta*/
 	}
 }
+
+ISR( _VECTOR(26) )									/* Registro de transmision vacio */
+{
+	if(IS_BUFFER_EMPTY(bufferTx))					/* si la cola esta vacia */
+	UCSR0B = UCSR0B&(~(1<<UDRIE0));				/*desactivar la interrupcion*/
+	else
+	UDR0 = bufferTx.buffer[bufferTx.out_idx++];	/* Manda el dato de la cola al UDR0*/
+
+}
+
+uint8_t UART0_available( void )				/* Retorna 1 si existe datos en la cola */
+{
+	return IS_BUFFER_EMPTY(bufferRx) ? 0:1;
+}
+
+char UART0_getchar( void )
+{
+	while((IS_BUFFER_EMPTY(bufferRx)));					/*	espera si no hay datos en la cola */
+	
+	return bufferRx.buffer[bufferRx.out_idx++];			/*	Regrasa el dato				*/
+}
+
+ISR( _VECTOR(25) )										/* Recepcion completa */
+{
+	while(IS_BUFFER_FULL(bufferRx));					/* espera si esta llena la cola */
+	
+	bufferRx.buffer[bufferRx.in_idx++] = UDR0;
+}
+
 void UART0_puts(char *str)
 {
 	while(*str)
 	UART0_putchar(*str++);
 }
+
+
+void itoa(char* str, uint16_t number, uint8_t base)
+{
+	char aux[20];
+	int i=0;
+	if(number == 0)
+	*str++ = 48;
+	aux[i] = number%base;
+	i++;
+	while(number)
+	{
+		aux[i] = number%base;
+		number =number/base;
+		i++;
+	}
+	i--;
+	for(i; i!=0; i--)
+	{
+		if(aux[i] > 9)
+		{
+			aux[i] += 7;
+		}
+		*(str++) = aux[i]+48;
+	}
+	*(str++) = 0;  //cierre de cadena para evitar basura
+}
+void UART0_AutoBaudRate( void )
+{
+	DDRE = ~(1<<PE0);				//PE0 como entrada
+	UCSR0C = 3<<UCSZ00;             //8 bits timer 0
+	TCCR0A = 0;						//modo normal timer 0
+	TCCR0B = 2<<CS00;				//preescalador en 8 timer 0
+	while( PINE & 1<<PE0 );			//mientras no se active el startbit esperar
+	TCNT0 = 0;						//inicializa en 0 para el conteo
+	while(!(PINE &1<<PE0));
+	TCCR0B =0;						//salva el conteo
+	
+	UBRR0 = TCNT0 - 1;				//1/Time;
+}
+
+

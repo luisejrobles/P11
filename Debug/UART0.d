@@ -11,8 +11,7 @@ UART0.d UART0.o: .././UART0.c \
  d:\program\ files\ (x86)\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\avr\version.h \
  d:\program\ files\ (x86)\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\avr\fuse.h \
  d:\program\ files\ (x86)\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\avr\lock.h \
- d:\program\ files\ (x86)\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\avr\interrupt.h \
- .././UART0.h
+ d:\program\ files\ (x86)\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\avr\interrupt.h
 
 d:\program\ files\ (x86)\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\avr\io.h:
 
@@ -39,5 +38,3 @@ d:\program\ files\ (x86)\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\avr\f
 d:\program\ files\ (x86)\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\avr\lock.h:
 
 d:\program\ files\ (x86)\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\avr\interrupt.h:
-
-.././UART0.h:
