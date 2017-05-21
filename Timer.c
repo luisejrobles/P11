@@ -14,7 +14,6 @@ static volatile uint8_t secFlag;
 static volatile uint8_t cntNota;
 static volatile uint8_t Fin;
 static volatile uint16_t volumen;
-static char volumenChar[20];
 
 
 //BANDERAS ISR
@@ -91,6 +90,7 @@ void Timer2_Play(const struct note song[],unsigned int len)
 }
 
 void Timer2_Volume(int8_t direction){
+	static char volumenChar[20];
 	/* 	Ajusta el ciclo de trabajo para incrementar o decrementar  el volumen
 	   	de las notas que se estan generando. */
 	volumen = direction;
