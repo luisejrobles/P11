@@ -15,7 +15,6 @@ static volatile uint8_t cntNota;
 static volatile uint8_t Fin;
 static volatile uint16_t volumen;
 
-
 //BANDERAS ISR
 static volatile uint8_t cambio = 1;
 static volatile uint16_t delay = 0;

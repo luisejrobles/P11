@@ -258,13 +258,12 @@ uint8_t ADC_Normalize(uint8_t valor)
 	{
 		valor = min;
 	}
-	return ( 100-(((valor*min)*100)/(max-min)) );
+	return 100-(((valor-min)*100)/(max-min));
 }
 uint8_t ADC_Read(uint8_t channel)
 {
 	uint8_t data;
-	uint8_t msb;
-	DDRA &= ~(1<<channel);				//Pin puerto A (ADC0) salida enable
+	DIDR0 = 0;
 	ADMUX  = (1<<REFS0)|(channel<<MUX0)|(1<<ADLAR);
 	ADCSRA = (1<<ADEN)|(1<<ADSC)|(7<<ADPS0);			//ADC start conversion, 128 PS
 	while(ADCSRA&(1<<ADSC));				//Loop hasta que termine la conversion
@@ -274,11 +273,9 @@ uint8_t ADC_Read(uint8_t channel)
 void ADC_Ini(void)
 {
 	char offsetChar[10];
-	uint8_t lsb;
 	/*  inicializa para 8 bits de resolución y habilita el ADC del microcontrolador de
 	forma generica. Encontrar el desplazamiento (offset) de la medición y almacenarla.*/
 	//OFFSET------------------------------
-	DIDR0 = (1<<ADC0D);							//Ahorrar energía
 	ADMUX  = (1<<REFS0)|(31<<MUX0)|(1<<ADLAR);				//AVCC with external capacitor at AREF, y MUX a tierra p. offset
 	ADCSRA = (1<<ADEN)|(1<<ADSC)|(7<<ADPS0);		//ADC enable, ADC interrupt enable, 128 PS
 	ADCSRB &= (~(1<<MUX5));
@@ -316,6 +313,5 @@ void Timer2_Set_Volume(uint8_t volume)
 {
 	/*Ajusta el ancho de pulso que es producido sobre la terminal OC2B. El rango del valor de
 	entrada sera de 0 a 100.*/
-	
 	Timer2_Volume(volume);	
 }
