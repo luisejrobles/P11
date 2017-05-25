@@ -80,7 +80,7 @@ void Timer2_Freq_Gen(uint8_t ticks){
 
 void Timer2_Play(const struct note song[],unsigned int len)
 {	
-	/*	FunciÃ³n que establece las condiciones necesarias para que
+	/*	Función que establece las condiciones necesarias para que
 		el generador recorra el arreglo de notas. */
 	cancion = song;
 	cntNota = 0;				//obteniendo principio de musica
@@ -89,11 +89,16 @@ void Timer2_Play(const struct note song[],unsigned int len)
 	DDRH |= (1<<DDH6);
 }
 
-void Timer2_Volume(int8_t direction){
+void Timer2_Volume(uint8_t direction){
 	static char volumenChar[20];
 	/* 	Ajusta el ciclo de trabajo para incrementar o decrementar  el volumen
 	   	de las notas que se estan generando. */
-	volumen = direction;
+	if(direction > 75)
+	{
+		volumen = 75;
+	}else {
+		volumen = direction;	
+	}
 	
 	itoa(volumenChar,volumen,10);
 	UART0_puts("\n\rVolumen: ");

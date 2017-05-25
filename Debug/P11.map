@@ -31,6 +31,8 @@ Discarded input sections
  .text          0x00000000        0x0 main.o
  .data          0x00000000        0x0 main.o
  .bss           0x00000000        0x0 main.o
+ .text.Timer2_Set_Volume
+                0x00000000        0x6 main.o
  .rodata.AngelesAzules
                 0x00000000      0x168 main.o
  .text          0x00000000        0x0 Timer.o
@@ -400,34 +402,34 @@ END GROUP
                 0x00000122                __vector_42
                 0x00000124                . = ALIGN (0x2)
  *(.text.*)
+ .text.ADC_Normalize
+                0x00000124       0x6e main.o
+                0x00000124                ADC_Normalize
  .text.ADC_Read
-                0x00000124       0x42 main.o
-                0x00000124                ADC_Read
- .text.ADC_Ini  0x00000166       0x7a main.o
-                0x00000166                ADC_Ini
+                0x00000192       0x3e main.o
+                0x00000192                ADC_Read
+ .text.ADC_Ini  0x000001d0       0x76 main.o
+                0x000001d0                ADC_Ini
  .text.ADC_MinMax
-                0x000001e0       0x98 main.o
-                0x000001e0                ADC_MinMax
- .text.Timer2_Set_Volume
-                0x00000278       0x3c main.o
-                0x00000278                Timer2_Set_Volume
- .text.main     0x000002b4       0x68 main.o
-                0x000002b4                main
+                0x00000246       0x98 main.o
+                0x00000246                ADC_MinMax
+ .text.main     0x000002de       0x30 main.o
+                0x000002de                main
  .text.Timer0_Ini
-                0x0000031c       0x16 Timer.o
-                0x0000031c                Timer0_Ini
+                0x0000030e       0x16 Timer.o
+                0x0000030e                Timer0_Ini
  .text.Timer2_Freq_Gen
-                0x00000332       0x4a Timer.o
-                0x00000332                Timer2_Freq_Gen
+                0x00000324       0x4a Timer.o
+                0x00000324                Timer2_Freq_Gen
  .text.__vector_21
-                0x0000037c       0xfe Timer.o
-                0x0000037c                __vector_21
+                0x0000036e       0xfe Timer.o
+                0x0000036e                __vector_21
  .text.Timer2_Play
-                0x0000047a       0x28 Timer.o
-                0x0000047a                Timer2_Play
+                0x0000046c       0x28 Timer.o
+                0x0000046c                Timer2_Play
  .text.Timer2_Volume
-                0x000004a2       0x2c Timer.o
-                0x000004a2                Timer2_Volume
+                0x00000494       0x3a Timer.o
+                0x00000494                Timer2_Volume
  .text.UART0_Ini
                 0x000004ce       0x4a UART0.o
                 0x000004ce                UART0_Ini
@@ -612,60 +614,60 @@ END GROUP
 .debug_sfnames
  *(.debug_sfnames)
 
-.debug_aranges  0x00000000       0xe0
+.debug_aranges  0x00000000       0xe8
  *(.debug_aranges)
  .debug_aranges
-                0x00000000       0x40 main.o
+                0x00000000       0x48 main.o
  .debug_aranges
-                0x00000040       0x40 Timer.o
+                0x00000048       0x40 Timer.o
  .debug_aranges
-                0x00000080       0x60 UART0.o
+                0x00000088       0x60 UART0.o
 
 .debug_pubnames
  *(.debug_pubnames)
 
-.debug_info     0x00000000     0x15fc
+.debug_info     0x00000000     0x164a
  *(.debug_info .gnu.linkonce.wi.*)
  .debug_info    0x00000000      0xbbc D:/Program Files (x86)/7.0/Packs/atmel/ATmega_DFP/1.2.132/gcc/dev/atmega2560/avr6/crtatmega2560.o
- .debug_info    0x00000bbc      0x51a main.o
- .debug_info    0x000010d6      0x2c1 Timer.o
- .debug_info    0x00001397      0x265 UART0.o
+ .debug_info    0x00000bbc      0x573 main.o
+ .debug_info    0x0000112f      0x2b6 Timer.o
+ .debug_info    0x000013e5      0x265 UART0.o
 
-.debug_abbrev   0x00000000      0xf8c
+.debug_abbrev   0x00000000      0xfd8
  *(.debug_abbrev)
  .debug_abbrev  0x00000000      0xb1a D:/Program Files (x86)/7.0/Packs/atmel/ATmega_DFP/1.2.132/gcc/dev/atmega2560/avr6/crtatmega2560.o
- .debug_abbrev  0x00000b1a      0x1a1 main.o
- .debug_abbrev  0x00000cbb      0x15a Timer.o
- .debug_abbrev  0x00000e15      0x177 UART0.o
+ .debug_abbrev  0x00000b1a      0x1ed main.o
+ .debug_abbrev  0x00000d07      0x15a Timer.o
+ .debug_abbrev  0x00000e61      0x177 UART0.o
 
-.debug_line     0x00000000      0x874
+.debug_line     0x00000000      0x88c
  *(.debug_line .debug_line.* .debug_line_end)
  .debug_line    0x00000000      0x1f9 D:/Program Files (x86)/7.0/Packs/atmel/ATmega_DFP/1.2.132/gcc/dev/atmega2560/avr6/crtatmega2560.o
- .debug_line    0x000001f9      0x239 main.o
- .debug_line    0x00000432      0x1b9 Timer.o
- .debug_line    0x000005eb      0x289 UART0.o
+ .debug_line    0x000001f9      0x245 main.o
+ .debug_line    0x0000043e      0x1c5 Timer.o
+ .debug_line    0x00000603      0x289 UART0.o
 
-.debug_frame    0x00000000      0x284
+.debug_frame    0x00000000      0x294
  *(.debug_frame)
- .debug_frame   0x00000000       0x8c main.o
- .debug_frame   0x0000008c       0xac Timer.o
- .debug_frame   0x00000138      0x14c UART0.o
+ .debug_frame   0x00000000       0x9c main.o
+ .debug_frame   0x0000009c       0xac Timer.o
+ .debug_frame   0x00000148      0x14c UART0.o
 
-.debug_str      0x00000000      0x6f9
+.debug_str      0x00000000      0x70d
  *(.debug_str)
  .debug_str     0x00000000      0x3e6 D:/Program Files (x86)/7.0/Packs/atmel/ATmega_DFP/1.2.132/gcc/dev/atmega2560/avr6/crtatmega2560.o
- .debug_str     0x000003e6      0x228 main.o
-                                0x261 (size before relaxing)
- .debug_str     0x0000060e       0x76 Timer.o
-                                0x20f (size before relaxing)
- .debug_str     0x00000684       0x75 UART0.o
+ .debug_str     0x000003e6      0x23c main.o
+                                0x275 (size before relaxing)
+ .debug_str     0x00000622       0x76 Timer.o
+                                0x208 (size before relaxing)
+ .debug_str     0x00000698       0x75 UART0.o
                                 0x212 (size before relaxing)
 
-.debug_loc      0x00000000      0x70a
+.debug_loc      0x00000000      0x710
  *(.debug_loc)
- .debug_loc     0x00000000      0x159 main.o
- .debug_loc     0x00000159      0x17d Timer.o
- .debug_loc     0x000002d6      0x434 UART0.o
+ .debug_loc     0x00000000      0x158 main.o
+ .debug_loc     0x00000158      0x184 Timer.o
+ .debug_loc     0x000002dc      0x434 UART0.o
 
 .debug_macinfo
  *(.debug_macinfo)
@@ -685,11 +687,11 @@ END GROUP
 .debug_pubtypes
  *(.debug_pubtypes)
 
-.debug_ranges   0x00000000       0xb0
+.debug_ranges   0x00000000       0xb8
  *(.debug_ranges)
- .debug_ranges  0x00000000       0x30 main.o
- .debug_ranges  0x00000030       0x30 Timer.o
- .debug_ranges  0x00000060       0x50 UART0.o
+ .debug_ranges  0x00000000       0x38 main.o
+ .debug_ranges  0x00000038       0x30 Timer.o
+ .debug_ranges  0x00000068       0x50 UART0.o
 
 .debug_macro
  *(.debug_macro)

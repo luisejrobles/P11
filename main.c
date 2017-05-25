@@ -1,16 +1,16 @@
-#include "UART0.h"
-#include "Timer.h"
 #include <avr/interrupt.h>
 #include <avr/io.h>
+#include "UART0.h"
+#include "Timer.h"
 #define PHOTORESISTOR PORTA0
-//#define ADC_Normalize( value ) ((value-min)*100)/(max-min)
-#define ADC_Normalize( value )	100-((value*min)*100)/(max-min)
+
 /*Macro que retorna el valor normalizado de 0 a 100, tomando en cuenta la relacion de los
 valores maximos y minimos.*/
 static volatile uint16_t max;
 static volatile uint16_t min;
 static volatile uint16_t offsetADC;
 
+uint8_t ADC_Normalize(uint8_t valor);
 void ADC_Ini( void );
 void ADC_MinMax( uint8_t channel );
 void Timer2_Set_Volume( uint8_t volume );
@@ -235,7 +235,6 @@ int main(void)
 {
 	UART0_Ini(0);
 	UART0_AutoBaudRate();
-	//UART0_puts("TEST");
 	Timer0_Ini();
 	ADC_Ini();
 	ADC_MinMax(PHOTORESISTOR);
@@ -250,32 +249,41 @@ int main(void)
 	return 0;	
 }
 
+uint8_t ADC_Normalize(uint8_t valor)
+{
+	if (valor > max)
+	{
+		valor = max;
+	}else if(valor < min)
+	{
+		valor = min;
+	}
+	return ( 100-(((valor*min)*100)/(max-min)) );
+}
 uint8_t ADC_Read(uint8_t channel)
 {
 	uint8_t data;
 	uint8_t msb;
 	DDRA &= ~(1<<channel);				//Pin puerto A (ADC0) salida enable
-	ADMUX  = (1<<REFS0)|(channel<<MUX0);
+	ADMUX  = (1<<REFS0)|(channel<<MUX0)|(1<<ADLAR);
 	ADCSRA = (1<<ADEN)|(1<<ADSC)|(7<<ADPS0);			//ADC start conversion, 128 PS
 	while(ADCSRA&(1<<ADSC));				//Loop hasta que termine la conversion
-	data = ADCL;							//Tomando dato
-	msb  = ADCH;							//Leyendo ADCH para que ADC reciba nueva conversion
+	data  = ADCH;							//Leyendo dato
 	return data - offsetADC;
 }
 void ADC_Ini(void)
 {
 	char offsetChar[10];
-	uint8_t msb;
+	uint8_t lsb;
 	/*  inicializa para 8 bits de resolución y habilita el ADC del microcontrolador de
 	forma generica. Encontrar el desplazamiento (offset) de la medición y almacenarla.*/
 	//OFFSET------------------------------
 	DIDR0 = (1<<ADC0D);							//Ahorrar energía
-	ADMUX  = (1<<REFS0)|(31<<MUX0);				//AVCC with external capacitor at AREF, y MUX a tierra p. offset
+	ADMUX  = (1<<REFS0)|(31<<MUX0)|(1<<ADLAR);				//AVCC with external capacitor at AREF, y MUX a tierra p. offset
 	ADCSRA = (1<<ADEN)|(1<<ADSC)|(7<<ADPS0);		//ADC enable, ADC interrupt enable, 128 PS
 	ADCSRB &= (~(1<<MUX5));
 	while(ADCSRA & 1<<ADSC);			//esperando el primer ciclo de conversion
-	offsetADC = ADCL;					//tomando offset
-	msb = ADCH;							//Tomando dato
+	offsetADC = ADCH;					//tomando offset
 	itoa(offsetChar,offsetADC,10);
 	UART0_puts("\n\rOffset capturado:");
 	UART0_puts(offsetChar);
@@ -308,14 +316,6 @@ void Timer2_Set_Volume(uint8_t volume)
 {
 	/*Ajusta el ancho de pulso que es producido sobre la terminal OC2B. El rango del valor de
 	entrada sera de 0 a 100.*/
-	if (volume > max)
-	{
-		Timer2_Volume(max);
-	}else if(volume < min)
-	{
-		Timer2_Volume(min);
-	}else
-	{
-		Timer2_Volume(volume);	
-	}
+	
+	Timer2_Volume(volume);	
 }

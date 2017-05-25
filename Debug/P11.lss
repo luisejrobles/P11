@@ -13,21 +13,21 @@ Idx Name          Size      VMA       LMA       File off  Algn
                   CONTENTS, READONLY
   4 .note.gnu.avr.deviceinfo 00000040  00000000  00000000  00000bec  2**2
                   CONTENTS, READONLY
-  5 .debug_aranges 000000e0  00000000  00000000  00000c2c  2**0
+  5 .debug_aranges 000000e8  00000000  00000000  00000c2c  2**0
                   CONTENTS, READONLY, DEBUGGING
-  6 .debug_info   000015fc  00000000  00000000  00000d0c  2**0
+  6 .debug_info   0000164a  00000000  00000000  00000d14  2**0
                   CONTENTS, READONLY, DEBUGGING
-  7 .debug_abbrev 00000f8c  00000000  00000000  00002308  2**0
+  7 .debug_abbrev 00000fd8  00000000  00000000  0000235e  2**0
                   CONTENTS, READONLY, DEBUGGING
-  8 .debug_line   00000874  00000000  00000000  00003294  2**0
+  8 .debug_line   0000088c  00000000  00000000  00003336  2**0
                   CONTENTS, READONLY, DEBUGGING
-  9 .debug_frame  00000284  00000000  00000000  00003b08  2**2
+  9 .debug_frame  00000294  00000000  00000000  00003bc4  2**2
                   CONTENTS, READONLY, DEBUGGING
- 10 .debug_str    000006f9  00000000  00000000  00003d8c  2**0
+ 10 .debug_str    0000070d  00000000  00000000  00003e58  2**0
                   CONTENTS, READONLY, DEBUGGING
- 11 .debug_loc    0000070a  00000000  00000000  00004485  2**0
+ 11 .debug_loc    00000710  00000000  00000000  00004565  2**0
                   CONTENTS, READONLY, DEBUGGING
- 12 .debug_ranges 000000b0  00000000  00000000  00004b8f  2**0
+ 12 .debug_ranges 000000b8  00000000  00000000  00004c75  2**0
                   CONTENTS, READONLY, DEBUGGING
 
 Disassembly of section .text:
@@ -75,7 +75,7 @@ Disassembly of section .text:
   4e:	00 00       	nop
   50:	68 c0       	rjmp	.+208    	; 0x122 <__bad_interrupt>
   52:	00 00       	nop
-  54:	93 c1       	rjmp	.+806    	; 0x37c <__vector_21>
+  54:	8c c1       	rjmp	.+792    	; 0x36e <__vector_21>
   56:	00 00       	nop
   58:	64 c0       	rjmp	.+200    	; 0x122 <__bad_interrupt>
   5a:	00 00       	nop
@@ -186,517 +186,533 @@ Disassembly of section .text:
  118:	a0 34       	cpi	r26, 0x40	; 64
  11a:	b2 07       	cpc	r27, r18
  11c:	e1 f7       	brne	.-8      	; 0x116 <.do_clear_bss_loop>
- 11e:	ca d0       	rcall	.+404    	; 0x2b4 <main>
+ 11e:	df d0       	rcall	.+446    	; 0x2de <main>
  120:	34 c4       	rjmp	.+2152   	; 0x98a <_exit>
 
 00000122 <__bad_interrupt>:
  122:	6e cf       	rjmp	.-292    	; 0x0 <__vectors>
 
-00000124 <ADC_Read>:
+00000124 <ADC_Normalize>:
+	return 0;	
+}
 
+uint8_t ADC_Normalize(uint8_t valor)
+{
+	if (valor > max)
+ 124:	28 2f       	mov	r18, r24
+ 126:	30 e0       	ldi	r19, 0x00	; 0
+ 128:	40 91 9c 03 	lds	r20, 0x039C	; 0x80039c <max>
+ 12c:	50 91 9d 03 	lds	r21, 0x039D	; 0x80039d <max+0x1>
+ 130:	42 17       	cp	r20, r18
+ 132:	53 07       	cpc	r21, r19
+ 134:	28 f4       	brcc	.+10     	; 0x140 <ADC_Normalize+0x1c>
+	{
+		valor = max;
+ 136:	80 91 9c 03 	lds	r24, 0x039C	; 0x80039c <max>
+ 13a:	90 91 9d 03 	lds	r25, 0x039D	; 0x80039d <max+0x1>
+ 13e:	0b c0       	rjmp	.+22     	; 0x156 <ADC_Normalize+0x32>
+	}else if(valor < min)
+ 140:	40 91 9a 03 	lds	r20, 0x039A	; 0x80039a <min>
+ 144:	50 91 9b 03 	lds	r21, 0x039B	; 0x80039b <min+0x1>
+ 148:	24 17       	cp	r18, r20
+ 14a:	35 07       	cpc	r19, r21
+ 14c:	20 f4       	brcc	.+8      	; 0x156 <ADC_Normalize+0x32>
+	{
+		valor = min;
+ 14e:	80 91 9a 03 	lds	r24, 0x039A	; 0x80039a <min>
+ 152:	90 91 9b 03 	lds	r25, 0x039B	; 0x80039b <min+0x1>
+	}
+	return ( 100-(((valor*min)*100)/(max-min)) );
+ 156:	40 91 9a 03 	lds	r20, 0x039A	; 0x80039a <min>
+ 15a:	50 91 9b 03 	lds	r21, 0x039B	; 0x80039b <min+0x1>
+ 15e:	60 91 9c 03 	lds	r22, 0x039C	; 0x80039c <max>
+ 162:	70 91 9d 03 	lds	r23, 0x039D	; 0x80039d <max+0x1>
+ 166:	e0 91 9a 03 	lds	r30, 0x039A	; 0x80039a <min>
+ 16a:	f0 91 9b 03 	lds	r31, 0x039B	; 0x80039b <min+0x1>
+ 16e:	24 e6       	ldi	r18, 0x64	; 100
+ 170:	24 9f       	mul	r18, r20
+ 172:	d0 01       	movw	r26, r0
+ 174:	25 9f       	mul	r18, r21
+ 176:	b0 0d       	add	r27, r0
+ 178:	11 24       	eor	r1, r1
+ 17a:	8a 9f       	mul	r24, r26
+ 17c:	a0 01       	movw	r20, r0
+ 17e:	8b 9f       	mul	r24, r27
+ 180:	50 0d       	add	r21, r0
+ 182:	11 24       	eor	r1, r1
+ 184:	6e 1b       	sub	r22, r30
+ 186:	7f 0b       	sbc	r23, r31
+ 188:	ca 01       	movw	r24, r20
+ 18a:	9e d3       	rcall	.+1852   	; 0x8c8 <__udivmodhi4>
+}
+ 18c:	82 2f       	mov	r24, r18
+ 18e:	86 1b       	sub	r24, r22
+ 190:	08 95       	ret
+
+00000192 <ADC_Read>:
 uint8_t ADC_Read(uint8_t channel)
 {
 	uint8_t data;
 	uint8_t msb;
 	DDRA &= ~(1<<channel);				//Pin puerto A (ADC0) salida enable
- 124:	91 b1       	in	r25, 0x01	; 1
- 126:	21 e0       	ldi	r18, 0x01	; 1
- 128:	30 e0       	ldi	r19, 0x00	; 0
- 12a:	08 2e       	mov	r0, r24
- 12c:	02 c0       	rjmp	.+4      	; 0x132 <ADC_Read+0xe>
- 12e:	22 0f       	add	r18, r18
- 130:	33 1f       	adc	r19, r19
- 132:	0a 94       	dec	r0
- 134:	e2 f7       	brpl	.-8      	; 0x12e <ADC_Read+0xa>
- 136:	20 95       	com	r18
- 138:	29 23       	and	r18, r25
- 13a:	21 b9       	out	0x01, r18	; 1
-	ADMUX  = (1<<REFS0)|(channel<<MUX0);
- 13c:	80 64       	ori	r24, 0x40	; 64
- 13e:	80 93 7c 00 	sts	0x007C, r24	; 0x80007c <__TEXT_REGION_LENGTH__+0x70007c>
+ 192:	91 b1       	in	r25, 0x01	; 1
+ 194:	21 e0       	ldi	r18, 0x01	; 1
+ 196:	30 e0       	ldi	r19, 0x00	; 0
+ 198:	08 2e       	mov	r0, r24
+ 19a:	02 c0       	rjmp	.+4      	; 0x1a0 <ADC_Read+0xe>
+ 19c:	22 0f       	add	r18, r18
+ 19e:	33 1f       	adc	r19, r19
+ 1a0:	0a 94       	dec	r0
+ 1a2:	e2 f7       	brpl	.-8      	; 0x19c <ADC_Read+0xa>
+ 1a4:	20 95       	com	r18
+ 1a6:	29 23       	and	r18, r25
+ 1a8:	21 b9       	out	0x01, r18	; 1
+	ADMUX  = (1<<REFS0)|(channel<<MUX0)|(1<<ADLAR);
+ 1aa:	80 66       	ori	r24, 0x60	; 96
+ 1ac:	80 93 7c 00 	sts	0x007C, r24	; 0x80007c <__TEXT_REGION_LENGTH__+0x70007c>
 	ADCSRA = (1<<ADEN)|(1<<ADSC)|(7<<ADPS0);			//ADC start conversion, 128 PS
- 142:	87 ec       	ldi	r24, 0xC7	; 199
- 144:	80 93 7a 00 	sts	0x007A, r24	; 0x80007a <__TEXT_REGION_LENGTH__+0x70007a>
+ 1b0:	87 ec       	ldi	r24, 0xC7	; 199
+ 1b2:	80 93 7a 00 	sts	0x007A, r24	; 0x80007a <__TEXT_REGION_LENGTH__+0x70007a>
 	while(ADCSRA&(1<<ADSC));				//Loop hasta que termine la conversion
- 148:	ea e7       	ldi	r30, 0x7A	; 122
- 14a:	f0 e0       	ldi	r31, 0x00	; 0
- 14c:	80 81       	ld	r24, Z
- 14e:	86 fd       	sbrc	r24, 6
- 150:	fd cf       	rjmp	.-6      	; 0x14c <ADC_Read+0x28>
-	data = ADCL;							//Tomando dato
- 152:	80 91 78 00 	lds	r24, 0x0078	; 0x800078 <__TEXT_REGION_LENGTH__+0x700078>
-	msb  = ADCH;							//Leyendo ADCH para que ADC reciba nueva conversion
- 156:	90 91 79 00 	lds	r25, 0x0079	; 0x800079 <__TEXT_REGION_LENGTH__+0x700079>
+ 1b6:	ea e7       	ldi	r30, 0x7A	; 122
+ 1b8:	f0 e0       	ldi	r31, 0x00	; 0
+ 1ba:	80 81       	ld	r24, Z
+ 1bc:	86 fd       	sbrc	r24, 6
+ 1be:	fd cf       	rjmp	.-6      	; 0x1ba <ADC_Read+0x28>
+	data  = ADCH;							//Leyendo dato
+ 1c0:	80 91 79 00 	lds	r24, 0x0079	; 0x800079 <__TEXT_REGION_LENGTH__+0x700079>
 	return data - offsetADC;
- 15a:	20 91 98 03 	lds	r18, 0x0398	; 0x800398 <__data_end>
- 15e:	30 91 99 03 	lds	r19, 0x0399	; 0x800399 <__data_end+0x1>
+ 1c4:	20 91 98 03 	lds	r18, 0x0398	; 0x800398 <__data_end>
+ 1c8:	30 91 99 03 	lds	r19, 0x0399	; 0x800399 <__data_end+0x1>
 }
- 162:	82 1b       	sub	r24, r18
- 164:	08 95       	ret
+ 1cc:	82 1b       	sub	r24, r18
+ 1ce:	08 95       	ret
 
-00000166 <ADC_Ini>:
+000001d0 <ADC_Ini>:
 void ADC_Ini(void)
 {
- 166:	cf 93       	push	r28
- 168:	df 93       	push	r29
- 16a:	cd b7       	in	r28, 0x3d	; 61
- 16c:	de b7       	in	r29, 0x3e	; 62
- 16e:	2a 97       	sbiw	r28, 0x0a	; 10
- 170:	0f b6       	in	r0, 0x3f	; 63
- 172:	f8 94       	cli
- 174:	de bf       	out	0x3e, r29	; 62
- 176:	0f be       	out	0x3f, r0	; 63
- 178:	cd bf       	out	0x3d, r28	; 61
+ 1d0:	cf 93       	push	r28
+ 1d2:	df 93       	push	r29
+ 1d4:	cd b7       	in	r28, 0x3d	; 61
+ 1d6:	de b7       	in	r29, 0x3e	; 62
+ 1d8:	2a 97       	sbiw	r28, 0x0a	; 10
+ 1da:	0f b6       	in	r0, 0x3f	; 63
+ 1dc:	f8 94       	cli
+ 1de:	de bf       	out	0x3e, r29	; 62
+ 1e0:	0f be       	out	0x3f, r0	; 63
+ 1e2:	cd bf       	out	0x3d, r28	; 61
 	char offsetChar[10];
-	uint8_t msb;
+	uint8_t lsb;
 	/*  inicializa para 8 bits de resoluci�n y habilita el ADC del microcontrolador de
 	forma generica. Encontrar el desplazamiento (offset) de la medici�n y almacenarla.*/
 	//OFFSET------------------------------
 	DIDR0 = (1<<ADC0D);							//Ahorrar energ�a
- 17a:	81 e0       	ldi	r24, 0x01	; 1
- 17c:	80 93 7e 00 	sts	0x007E, r24	; 0x80007e <__TEXT_REGION_LENGTH__+0x70007e>
-	ADMUX  = (1<<REFS0)|(31<<MUX0);				//AVCC with external capacitor at AREF, y MUX a tierra p. offset
- 180:	8f e5       	ldi	r24, 0x5F	; 95
- 182:	80 93 7c 00 	sts	0x007C, r24	; 0x80007c <__TEXT_REGION_LENGTH__+0x70007c>
+ 1e4:	81 e0       	ldi	r24, 0x01	; 1
+ 1e6:	80 93 7e 00 	sts	0x007E, r24	; 0x80007e <__TEXT_REGION_LENGTH__+0x70007e>
+	ADMUX  = (1<<REFS0)|(31<<MUX0)|(1<<ADLAR);				//AVCC with external capacitor at AREF, y MUX a tierra p. offset
+ 1ea:	8f e7       	ldi	r24, 0x7F	; 127
+ 1ec:	80 93 7c 00 	sts	0x007C, r24	; 0x80007c <__TEXT_REGION_LENGTH__+0x70007c>
 	ADCSRA = (1<<ADEN)|(1<<ADSC)|(7<<ADPS0);		//ADC enable, ADC interrupt enable, 128 PS
- 186:	87 ec       	ldi	r24, 0xC7	; 199
- 188:	80 93 7a 00 	sts	0x007A, r24	; 0x80007a <__TEXT_REGION_LENGTH__+0x70007a>
+ 1f0:	87 ec       	ldi	r24, 0xC7	; 199
+ 1f2:	80 93 7a 00 	sts	0x007A, r24	; 0x80007a <__TEXT_REGION_LENGTH__+0x70007a>
 	ADCSRB &= (~(1<<MUX5));
- 18c:	eb e7       	ldi	r30, 0x7B	; 123
- 18e:	f0 e0       	ldi	r31, 0x00	; 0
- 190:	80 81       	ld	r24, Z
- 192:	87 7f       	andi	r24, 0xF7	; 247
- 194:	80 83       	st	Z, r24
+ 1f6:	eb e7       	ldi	r30, 0x7B	; 123
+ 1f8:	f0 e0       	ldi	r31, 0x00	; 0
+ 1fa:	80 81       	ld	r24, Z
+ 1fc:	87 7f       	andi	r24, 0xF7	; 247
+ 1fe:	80 83       	st	Z, r24
 	while(ADCSRA & 1<<ADSC);			//esperando el primer ciclo de conversion
- 196:	ea e7       	ldi	r30, 0x7A	; 122
- 198:	f0 e0       	ldi	r31, 0x00	; 0
- 19a:	80 81       	ld	r24, Z
- 19c:	86 fd       	sbrc	r24, 6
- 19e:	fd cf       	rjmp	.-6      	; 0x19a <ADC_Ini+0x34>
-	offsetADC = ADCL;					//tomando offset
- 1a0:	80 91 78 00 	lds	r24, 0x0078	; 0x800078 <__TEXT_REGION_LENGTH__+0x700078>
- 1a4:	90 e0       	ldi	r25, 0x00	; 0
- 1a6:	90 93 99 03 	sts	0x0399, r25	; 0x800399 <__data_end+0x1>
- 1aa:	80 93 98 03 	sts	0x0398, r24	; 0x800398 <__data_end>
-	msb = ADCH;							//Tomando dato
- 1ae:	80 91 79 00 	lds	r24, 0x0079	; 0x800079 <__TEXT_REGION_LENGTH__+0x700079>
+ 200:	ea e7       	ldi	r30, 0x7A	; 122
+ 202:	f0 e0       	ldi	r31, 0x00	; 0
+ 204:	80 81       	ld	r24, Z
+ 206:	86 fd       	sbrc	r24, 6
+ 208:	fd cf       	rjmp	.-6      	; 0x204 <ADC_Ini+0x34>
+	offsetADC = ADCH;					//tomando offset
+ 20a:	80 91 79 00 	lds	r24, 0x0079	; 0x800079 <__TEXT_REGION_LENGTH__+0x700079>
+ 20e:	90 e0       	ldi	r25, 0x00	; 0
+ 210:	90 93 99 03 	sts	0x0399, r25	; 0x800399 <__data_end+0x1>
+ 214:	80 93 98 03 	sts	0x0398, r24	; 0x800398 <__data_end>
 	itoa(offsetChar,offsetADC,10);
- 1b2:	60 91 98 03 	lds	r22, 0x0398	; 0x800398 <__data_end>
- 1b6:	70 91 99 03 	lds	r23, 0x0399	; 0x800399 <__data_end+0x1>
- 1ba:	4a e0       	ldi	r20, 0x0A	; 10
- 1bc:	ce 01       	movw	r24, r28
- 1be:	01 96       	adiw	r24, 0x01	; 1
- 1c0:	fd d2       	rcall	.+1530   	; 0x7bc <itoa>
+ 218:	60 91 98 03 	lds	r22, 0x0398	; 0x800398 <__data_end>
+ 21c:	70 91 99 03 	lds	r23, 0x0399	; 0x800399 <__data_end+0x1>
+ 220:	4a e0       	ldi	r20, 0x0A	; 10
+ 222:	ce 01       	movw	r24, r28
+ 224:	01 96       	adiw	r24, 0x01	; 1
+ 226:	ca d2       	rcall	.+1428   	; 0x7bc <itoa>
 	UART0_puts("\n\rOffset capturado:");
- 1c2:	81 e0       	ldi	r24, 0x01	; 1
- 1c4:	92 e0       	ldi	r25, 0x02	; 2
+ 228:	81 e0       	ldi	r24, 0x01	; 1
+ 22a:	92 e0       	ldi	r25, 0x02	; 2
 	UART0_puts(offsetChar);
- 1c6:	ec d2       	rcall	.+1496   	; 0x7a0 <UART0_puts>
- 1c8:	ce 01       	movw	r24, r28
- 1ca:	01 96       	adiw	r24, 0x01	; 1
+ 22c:	b9 d2       	rcall	.+1394   	; 0x7a0 <UART0_puts>
+ 22e:	ce 01       	movw	r24, r28
+ 230:	01 96       	adiw	r24, 0x01	; 1
 }
- 1cc:	e9 d2       	rcall	.+1490   	; 0x7a0 <UART0_puts>
- 1ce:	2a 96       	adiw	r28, 0x0a	; 10
- 1d0:	0f b6       	in	r0, 0x3f	; 63
- 1d2:	f8 94       	cli
- 1d4:	de bf       	out	0x3e, r29	; 62
- 1d6:	0f be       	out	0x3f, r0	; 63
- 1d8:	cd bf       	out	0x3d, r28	; 61
- 1da:	df 91       	pop	r29
- 1dc:	cf 91       	pop	r28
- 1de:	08 95       	ret
+ 232:	b6 d2       	rcall	.+1388   	; 0x7a0 <UART0_puts>
+ 234:	2a 96       	adiw	r28, 0x0a	; 10
+ 236:	0f b6       	in	r0, 0x3f	; 63
+ 238:	f8 94       	cli
+ 23a:	de bf       	out	0x3e, r29	; 62
+ 23c:	0f be       	out	0x3f, r0	; 63
+ 23e:	cd bf       	out	0x3d, r28	; 61
+ 240:	df 91       	pop	r29
+ 242:	cf 91       	pop	r28
+ 244:	08 95       	ret
 
-000001e0 <ADC_MinMax>:
+00000246 <ADC_MinMax>:
 void ADC_MinMax( uint8_t channel )
 {
- 1e0:	1f 93       	push	r17
- 1e2:	cf 93       	push	r28
- 1e4:	df 93       	push	r29
- 1e6:	cd b7       	in	r28, 0x3d	; 61
- 1e8:	de b7       	in	r29, 0x3e	; 62
- 1ea:	64 97       	sbiw	r28, 0x14	; 20
- 1ec:	0f b6       	in	r0, 0x3f	; 63
- 1ee:	f8 94       	cli
- 1f0:	de bf       	out	0x3e, r29	; 62
- 1f2:	0f be       	out	0x3f, r0	; 63
- 1f4:	cd bf       	out	0x3d, r28	; 61
+ 246:	1f 93       	push	r17
+ 248:	cf 93       	push	r28
+ 24a:	df 93       	push	r29
+ 24c:	cd b7       	in	r28, 0x3d	; 61
+ 24e:	de b7       	in	r29, 0x3e	; 62
+ 250:	64 97       	sbiw	r28, 0x14	; 20
+ 252:	0f b6       	in	r0, 0x3f	; 63
+ 254:	f8 94       	cli
+ 256:	de bf       	out	0x3e, r29	; 62
+ 258:	0f be       	out	0x3f, r0	; 63
+ 25a:	cd bf       	out	0x3d, r28	; 61
 	char minChar[10], maxChar[10];
 
 	UART0_getchar();
- 1f6:	18 2f       	mov	r17, r24
- 1f8:	51 d2       	rcall	.+1186   	; 0x69c <UART0_getchar>
- 1fa:	50 d2       	rcall	.+1184   	; 0x69c <UART0_getchar>
- 1fc:	4f d2       	rcall	.+1182   	; 0x69c <UART0_getchar>
- 1fe:	85 e1       	ldi	r24, 0x15	; 21
- 200:	92 e0       	ldi	r25, 0x02	; 2
- 202:	ce d2       	rcall	.+1436   	; 0x7a0 <UART0_puts>
- 204:	4b d2       	rcall	.+1174   	; 0x69c <UART0_getchar>
- 206:	89 e3       	ldi	r24, 0x39	; 57
- 208:	92 e0       	ldi	r25, 0x02	; 2
- 20a:	ca d2       	rcall	.+1428   	; 0x7a0 <UART0_puts>
- 20c:	81 2f       	mov	r24, r17
- 20e:	8a df       	rcall	.-236    	; 0x124 <ADC_Read>
- 210:	90 e0       	ldi	r25, 0x00	; 0
- 212:	90 93 9b 03 	sts	0x039B, r25	; 0x80039b <min+0x1>
- 216:	80 93 9a 03 	sts	0x039A, r24	; 0x80039a <min>
- 21a:	60 91 9a 03 	lds	r22, 0x039A	; 0x80039a <min>
- 21e:	70 91 9b 03 	lds	r23, 0x039B	; 0x80039b <min+0x1>
- 222:	4a e0       	ldi	r20, 0x0A	; 10
- 224:	ce 01       	movw	r24, r28
- 226:	01 96       	adiw	r24, 0x01	; 1
- 228:	c9 d2       	rcall	.+1426   	; 0x7bc <itoa>
- 22a:	ce 01       	movw	r24, r28
- 22c:	01 96       	adiw	r24, 0x01	; 1
- 22e:	b8 d2       	rcall	.+1392   	; 0x7a0 <UART0_puts>
- 230:	84 e4       	ldi	r24, 0x44	; 68
- 232:	92 e0       	ldi	r25, 0x02	; 2
- 234:	b5 d2       	rcall	.+1386   	; 0x7a0 <UART0_puts>
- 236:	32 d2       	rcall	.+1124   	; 0x69c <UART0_getchar>
- 238:	81 2f       	mov	r24, r17
- 23a:	74 df       	rcall	.-280    	; 0x124 <ADC_Read>
- 23c:	90 e0       	ldi	r25, 0x00	; 0
- 23e:	90 93 9d 03 	sts	0x039D, r25	; 0x80039d <max+0x1>
- 242:	80 93 9c 03 	sts	0x039C, r24	; 0x80039c <max>
- 246:	89 e6       	ldi	r24, 0x69	; 105
- 248:	92 e0       	ldi	r25, 0x02	; 2
- 24a:	aa d2       	rcall	.+1364   	; 0x7a0 <UART0_puts>
- 24c:	60 91 9c 03 	lds	r22, 0x039C	; 0x80039c <max>
- 250:	70 91 9d 03 	lds	r23, 0x039D	; 0x80039d <max+0x1>
- 254:	4a e0       	ldi	r20, 0x0A	; 10
- 256:	ce 01       	movw	r24, r28
- 258:	0b 96       	adiw	r24, 0x0b	; 11
- 25a:	b0 d2       	rcall	.+1376   	; 0x7bc <itoa>
- 25c:	ce 01       	movw	r24, r28
- 25e:	0b 96       	adiw	r24, 0x0b	; 11
- 260:	9f d2       	rcall	.+1342   	; 0x7a0 <UART0_puts>
+ 25c:	18 2f       	mov	r17, r24
+ 25e:	1e d2       	rcall	.+1084   	; 0x69c <UART0_getchar>
+ 260:	1d d2       	rcall	.+1082   	; 0x69c <UART0_getchar>
  262:	1c d2       	rcall	.+1080   	; 0x69c <UART0_getchar>
- 264:	64 96       	adiw	r28, 0x14	; 20
- 266:	0f b6       	in	r0, 0x3f	; 63
- 268:	f8 94       	cli
- 26a:	de bf       	out	0x3e, r29	; 62
- 26c:	0f be       	out	0x3f, r0	; 63
- 26e:	cd bf       	out	0x3d, r28	; 61
- 270:	df 91       	pop	r29
- 272:	cf 91       	pop	r28
- 274:	1f 91       	pop	r17
- 276:	08 95       	ret
+ 264:	85 e1       	ldi	r24, 0x15	; 21
+ 266:	92 e0       	ldi	r25, 0x02	; 2
+ 268:	9b d2       	rcall	.+1334   	; 0x7a0 <UART0_puts>
+ 26a:	18 d2       	rcall	.+1072   	; 0x69c <UART0_getchar>
+ 26c:	89 e3       	ldi	r24, 0x39	; 57
+ 26e:	92 e0       	ldi	r25, 0x02	; 2
+ 270:	97 d2       	rcall	.+1326   	; 0x7a0 <UART0_puts>
+ 272:	81 2f       	mov	r24, r17
+ 274:	8e df       	rcall	.-228    	; 0x192 <ADC_Read>
+ 276:	90 e0       	ldi	r25, 0x00	; 0
+ 278:	90 93 9b 03 	sts	0x039B, r25	; 0x80039b <min+0x1>
+ 27c:	80 93 9a 03 	sts	0x039A, r24	; 0x80039a <min>
+ 280:	60 91 9a 03 	lds	r22, 0x039A	; 0x80039a <min>
+ 284:	70 91 9b 03 	lds	r23, 0x039B	; 0x80039b <min+0x1>
+ 288:	4a e0       	ldi	r20, 0x0A	; 10
+ 28a:	ce 01       	movw	r24, r28
+ 28c:	01 96       	adiw	r24, 0x01	; 1
+ 28e:	96 d2       	rcall	.+1324   	; 0x7bc <itoa>
+ 290:	ce 01       	movw	r24, r28
+ 292:	01 96       	adiw	r24, 0x01	; 1
+ 294:	85 d2       	rcall	.+1290   	; 0x7a0 <UART0_puts>
+ 296:	84 e4       	ldi	r24, 0x44	; 68
+ 298:	92 e0       	ldi	r25, 0x02	; 2
+ 29a:	82 d2       	rcall	.+1284   	; 0x7a0 <UART0_puts>
+ 29c:	ff d1       	rcall	.+1022   	; 0x69c <UART0_getchar>
+ 29e:	81 2f       	mov	r24, r17
+ 2a0:	78 df       	rcall	.-272    	; 0x192 <ADC_Read>
+ 2a2:	90 e0       	ldi	r25, 0x00	; 0
+ 2a4:	90 93 9d 03 	sts	0x039D, r25	; 0x80039d <max+0x1>
+ 2a8:	80 93 9c 03 	sts	0x039C, r24	; 0x80039c <max>
+ 2ac:	89 e6       	ldi	r24, 0x69	; 105
+ 2ae:	92 e0       	ldi	r25, 0x02	; 2
+ 2b0:	77 d2       	rcall	.+1262   	; 0x7a0 <UART0_puts>
+ 2b2:	60 91 9c 03 	lds	r22, 0x039C	; 0x80039c <max>
+ 2b6:	70 91 9d 03 	lds	r23, 0x039D	; 0x80039d <max+0x1>
+ 2ba:	4a e0       	ldi	r20, 0x0A	; 10
+ 2bc:	ce 01       	movw	r24, r28
+ 2be:	0b 96       	adiw	r24, 0x0b	; 11
+ 2c0:	7d d2       	rcall	.+1274   	; 0x7bc <itoa>
+ 2c2:	ce 01       	movw	r24, r28
+ 2c4:	0b 96       	adiw	r24, 0x0b	; 11
+ 2c6:	6c d2       	rcall	.+1240   	; 0x7a0 <UART0_puts>
+ 2c8:	e9 d1       	rcall	.+978    	; 0x69c <UART0_getchar>
+ 2ca:	64 96       	adiw	r28, 0x14	; 20
+ 2cc:	0f b6       	in	r0, 0x3f	; 63
+ 2ce:	f8 94       	cli
+ 2d0:	de bf       	out	0x3e, r29	; 62
+ 2d2:	0f be       	out	0x3f, r0	; 63
+ 2d4:	cd bf       	out	0x3d, r28	; 61
+ 2d6:	df 91       	pop	r29
+ 2d8:	cf 91       	pop	r28
+ 2da:	1f 91       	pop	r17
+ 2dc:	08 95       	ret
 
-00000278 <Timer2_Set_Volume>:
- 278:	28 2f       	mov	r18, r24
- 27a:	30 e0       	ldi	r19, 0x00	; 0
- 27c:	40 91 9c 03 	lds	r20, 0x039C	; 0x80039c <max>
- 280:	50 91 9d 03 	lds	r21, 0x039D	; 0x80039d <max+0x1>
- 284:	42 17       	cp	r20, r18
- 286:	53 07       	cpc	r21, r19
- 288:	30 f4       	brcc	.+12     	; 0x296 <Timer2_Set_Volume+0x1e>
- 28a:	80 91 9c 03 	lds	r24, 0x039C	; 0x80039c <max>
- 28e:	90 91 9d 03 	lds	r25, 0x039D	; 0x80039d <max+0x1>
- 292:	07 c1       	rjmp	.+526    	; 0x4a2 <Timer2_Volume>
- 294:	08 95       	ret
- 296:	40 91 9a 03 	lds	r20, 0x039A	; 0x80039a <min>
- 29a:	50 91 9b 03 	lds	r21, 0x039B	; 0x80039b <min+0x1>
- 29e:	24 17       	cp	r18, r20
- 2a0:	35 07       	cpc	r19, r21
- 2a2:	30 f4       	brcc	.+12     	; 0x2b0 <Timer2_Set_Volume+0x38>
- 2a4:	80 91 9a 03 	lds	r24, 0x039A	; 0x80039a <min>
- 2a8:	90 91 9b 03 	lds	r25, 0x039B	; 0x80039b <min+0x1>
- 2ac:	fa c0       	rjmp	.+500    	; 0x4a2 <Timer2_Volume>
- 2ae:	08 95       	ret
- 2b0:	f8 c0       	rjmp	.+496    	; 0x4a2 <Timer2_Volume>
- 2b2:	08 95       	ret
+000002de <main>:
+ 2de:	80 e0       	ldi	r24, 0x00	; 0
+ 2e0:	90 e0       	ldi	r25, 0x00	; 0
+ 2e2:	f5 d0       	rcall	.+490    	; 0x4ce <UART0_Ini>
+ 2e4:	db d2       	rcall	.+1462   	; 0x89c <UART0_AutoBaudRate>
+ 2e6:	13 d0       	rcall	.+38     	; 0x30e <Timer0_Ini>
+ 2e8:	73 df       	rcall	.-282    	; 0x1d0 <ADC_Ini>
+ 2ea:	80 e0       	ldi	r24, 0x00	; 0
+ 2ec:	ac df       	rcall	.-168    	; 0x246 <ADC_MinMax>
+ 2ee:	c1 d1       	rcall	.+898    	; 0x672 <UART0_available>
+ 2f0:	88 23       	and	r24, r24
+ 2f2:	41 f0       	breq	.+16     	; 0x304 <main+0x26>
+ 2f4:	d3 d1       	rcall	.+934    	; 0x69c <UART0_getchar>
+ 2f6:	80 37       	cpi	r24, 0x70	; 112
+ 2f8:	29 f4       	brne	.+10     	; 0x304 <main+0x26>
+ 2fa:	66 e4       	ldi	r22, 0x46	; 70
+ 2fc:	70 e0       	ldi	r23, 0x00	; 0
+ 2fe:	84 e7       	ldi	r24, 0x74	; 116
+ 300:	92 e0       	ldi	r25, 0x02	; 2
+ 302:	b4 d0       	rcall	.+360    	; 0x46c <Timer2_Play>
+ 304:	80 e0       	ldi	r24, 0x00	; 0
+ 306:	45 df       	rcall	.-374    	; 0x192 <ADC_Read>
+ 308:	0d df       	rcall	.-486    	; 0x124 <ADC_Normalize>
+ 30a:	c4 d0       	rcall	.+392    	; 0x494 <Timer2_Volume>
+ 30c:	f0 cf       	rjmp	.-32     	; 0x2ee <main+0x10>
 
-000002b4 <main>:
- 2b4:	80 e0       	ldi	r24, 0x00	; 0
- 2b6:	90 e0       	ldi	r25, 0x00	; 0
- 2b8:	0a d1       	rcall	.+532    	; 0x4ce <UART0_Ini>
- 2ba:	f0 d2       	rcall	.+1504   	; 0x89c <UART0_AutoBaudRate>
- 2bc:	2f d0       	rcall	.+94     	; 0x31c <Timer0_Ini>
- 2be:	53 df       	rcall	.-346    	; 0x166 <ADC_Ini>
- 2c0:	80 e0       	ldi	r24, 0x00	; 0
- 2c2:	8e df       	rcall	.-228    	; 0x1e0 <ADC_MinMax>
- 2c4:	c4 e6       	ldi	r28, 0x64	; 100
- 2c6:	d5 d1       	rcall	.+938    	; 0x672 <UART0_available>
- 2c8:	88 23       	and	r24, r24
- 2ca:	41 f0       	breq	.+16     	; 0x2dc <main+0x28>
- 2cc:	e7 d1       	rcall	.+974    	; 0x69c <UART0_getchar>
- 2ce:	80 37       	cpi	r24, 0x70	; 112
- 2d0:	29 f4       	brne	.+10     	; 0x2dc <main+0x28>
- 2d2:	66 e4       	ldi	r22, 0x46	; 70
- 2d4:	70 e0       	ldi	r23, 0x00	; 0
- 2d6:	84 e7       	ldi	r24, 0x74	; 116
- 2d8:	92 e0       	ldi	r25, 0x02	; 2
- 2da:	cf d0       	rcall	.+414    	; 0x47a <Timer2_Play>
- 2dc:	80 e0       	ldi	r24, 0x00	; 0
- 2de:	22 df       	rcall	.-444    	; 0x124 <ADC_Read>
- 2e0:	e0 91 9a 03 	lds	r30, 0x039A	; 0x80039a <min>
- 2e4:	f0 91 9b 03 	lds	r31, 0x039B	; 0x80039b <min+0x1>
- 2e8:	60 91 9c 03 	lds	r22, 0x039C	; 0x80039c <max>
- 2ec:	70 91 9d 03 	lds	r23, 0x039D	; 0x80039d <max+0x1>
- 2f0:	20 91 9a 03 	lds	r18, 0x039A	; 0x80039a <min>
- 2f4:	30 91 9b 03 	lds	r19, 0x039B	; 0x80039b <min+0x1>
- 2f8:	ce 9f       	mul	r28, r30
- 2fa:	a0 01       	movw	r20, r0
- 2fc:	cf 9f       	mul	r28, r31
- 2fe:	50 0d       	add	r21, r0
- 300:	11 24       	eor	r1, r1
- 302:	e8 2f       	mov	r30, r24
- 304:	e4 9f       	mul	r30, r20
- 306:	c0 01       	movw	r24, r0
- 308:	e5 9f       	mul	r30, r21
- 30a:	90 0d       	add	r25, r0
- 30c:	11 24       	eor	r1, r1
- 30e:	62 1b       	sub	r22, r18
- 310:	73 0b       	sbc	r23, r19
- 312:	da d2       	rcall	.+1460   	; 0x8c8 <__udivmodhi4>
- 314:	8c 2f       	mov	r24, r28
- 316:	86 1b       	sub	r24, r22
- 318:	af df       	rcall	.-162    	; 0x278 <Timer2_Set_Volume>
- 31a:	d5 cf       	rjmp	.-86     	; 0x2c6 <main+0x12>
-
-0000031c <Timer0_Ini>:
+0000030e <Timer0_Ini>:
 
 void Timer0_Ini ( void ){
 	/* 	Permanece igual, ocasionando una interrupciÃ³n 
 		cada 1 ms en modo CTC. */
 	// 1ms: 0.001/(1/(16M/64) = 250 
 	TCCR0A = (2<<WGM00);	//Iniciando CTC
- 31c:	82 e0       	ldi	r24, 0x02	; 2
- 31e:	84 bd       	out	0x24, r24	; 36
+ 30e:	82 e0       	ldi	r24, 0x02	; 2
+ 310:	84 bd       	out	0x24, r24	; 36
 	TCCR0B = (3<<CS00);		//64PS
- 320:	93 e0       	ldi	r25, 0x03	; 3
- 322:	95 bd       	out	0x25, r25	; 37
+ 312:	93 e0       	ldi	r25, 0x03	; 3
+ 314:	95 bd       	out	0x25, r25	; 37
 	TCNT0  = 0;				//Iniciando contador
- 324:	16 bc       	out	0x26, r1	; 38
+ 316:	16 bc       	out	0x26, r1	; 38
 	OCR0A  = 250-1;			//1ms tope
- 326:	99 ef       	ldi	r25, 0xF9	; 249
- 328:	97 bd       	out	0x27, r25	; 39
+ 318:	99 ef       	ldi	r25, 0xF9	; 249
+ 31a:	97 bd       	out	0x27, r25	; 39
 	TIMSK0 = (1<<OCIE0A);	//Habilitando interrupcion
- 32a:	80 93 6e 00 	sts	0x006E, r24	; 0x80006e <__TEXT_REGION_LENGTH__+0x70006e>
+ 31c:	80 93 6e 00 	sts	0x006E, r24	; 0x80006e <__TEXT_REGION_LENGTH__+0x70006e>
 	sei();					//Habilitando interrupciones gobales
- 32e:	78 94       	sei
- 330:	08 95       	ret
+ 320:	78 94       	sei
+ 322:	08 95       	ret
 
-00000332 <Timer2_Freq_Gen>:
+00000324 <Timer2_Freq_Gen>:
 	/* 	Si "ticks" es mayor que 0 entonces, inicializa y habilita el Generador 
 		de Frecuencia del Timer2 con el tope dado por "ticks".
 		De lo contrario se requiere deshabilitar el Generador, generando de 
 		esta forma el silencio (0 lÃ³gico).
 		*/
 	if(ticks > 0)
- 332:	88 23       	and	r24, r24
- 334:	01 f1       	breq	.+64     	; 0x376 <Timer2_Freq_Gen+0x44>
+ 324:	88 23       	and	r24, r24
+ 326:	01 f1       	breq	.+64     	; 0x368 <Timer2_Freq_Gen+0x44>
 	{
 		//DDRH = (1<<DDH6);
 		TCCR2A = (3<<WGM20)|(2<<COM2B0);			//PWM OCR2A TOP
- 336:	93 e2       	ldi	r25, 0x23	; 35
- 338:	90 93 b0 00 	sts	0x00B0, r25	; 0x8000b0 <__TEXT_REGION_LENGTH__+0x7000b0>
+ 328:	93 e2       	ldi	r25, 0x23	; 35
+ 32a:	90 93 b0 00 	sts	0x00B0, r25	; 0x8000b0 <__TEXT_REGION_LENGTH__+0x7000b0>
 		TCCR2B = (6<<CS20)|(1<<WGM22);				//256PS, COM2B0 non inverting
- 33c:	9e e0       	ldi	r25, 0x0E	; 14
- 33e:	90 93 b1 00 	sts	0x00B1, r25	; 0x8000b1 <__TEXT_REGION_LENGTH__+0x7000b1>
+ 32e:	9e e0       	ldi	r25, 0x0E	; 14
+ 330:	90 93 b1 00 	sts	0x00B1, r25	; 0x8000b1 <__TEXT_REGION_LENGTH__+0x7000b1>
 		OCR2A  = ticks -1 ;							//Tope en OCR2A
- 342:	81 50       	subi	r24, 0x01	; 1
- 344:	e3 eb       	ldi	r30, 0xB3	; 179
- 346:	f0 e0       	ldi	r31, 0x00	; 0
- 348:	80 83       	st	Z, r24
+ 334:	81 50       	subi	r24, 0x01	; 1
+ 336:	e3 eb       	ldi	r30, 0xB3	; 179
+ 338:	f0 e0       	ldi	r31, 0x00	; 0
+ 33a:	80 83       	st	Z, r24
 		OCR2B = (OCR2A*volumen)/100;
- 34a:	40 81       	ld	r20, Z
- 34c:	80 91 b6 03 	lds	r24, 0x03B6	; 0x8003b6 <volumen>
- 350:	90 91 b7 03 	lds	r25, 0x03B7	; 0x8003b7 <volumen+0x1>
- 354:	48 9f       	mul	r20, r24
- 356:	90 01       	movw	r18, r0
- 358:	49 9f       	mul	r20, r25
- 35a:	30 0d       	add	r19, r0
- 35c:	11 24       	eor	r1, r1
- 35e:	36 95       	lsr	r19
- 360:	27 95       	ror	r18
- 362:	36 95       	lsr	r19
- 364:	27 95       	ror	r18
- 366:	ab e7       	ldi	r26, 0x7B	; 123
- 368:	b4 e1       	ldi	r27, 0x14	; 20
- 36a:	de d2       	rcall	.+1468   	; 0x928 <__umulhisi3>
- 36c:	96 95       	lsr	r25
- 36e:	87 95       	ror	r24
- 370:	80 93 b4 00 	sts	0x00B4, r24	; 0x8000b4 <__TEXT_REGION_LENGTH__+0x7000b4>
- 374:	08 95       	ret
+ 33c:	40 81       	ld	r20, Z
+ 33e:	80 91 b6 03 	lds	r24, 0x03B6	; 0x8003b6 <volumen>
+ 342:	90 91 b7 03 	lds	r25, 0x03B7	; 0x8003b7 <volumen+0x1>
+ 346:	48 9f       	mul	r20, r24
+ 348:	90 01       	movw	r18, r0
+ 34a:	49 9f       	mul	r20, r25
+ 34c:	30 0d       	add	r19, r0
+ 34e:	11 24       	eor	r1, r1
+ 350:	36 95       	lsr	r19
+ 352:	27 95       	ror	r18
+ 354:	36 95       	lsr	r19
+ 356:	27 95       	ror	r18
+ 358:	ab e7       	ldi	r26, 0x7B	; 123
+ 35a:	b4 e1       	ldi	r27, 0x14	; 20
+ 35c:	e5 d2       	rcall	.+1482   	; 0x928 <__umulhisi3>
+ 35e:	96 95       	lsr	r25
+ 360:	87 95       	ror	r24
+ 362:	80 93 b4 00 	sts	0x00B4, r24	; 0x8000b4 <__TEXT_REGION_LENGTH__+0x7000b4>
+ 366:	08 95       	ret
 	}else
 	{
 		//TCCR2B &= ~(6<<CS20);			//Deshabilitando PS para 0 logico
 		TCCR2B = 0;						//Deshabilitando el generador
- 376:	10 92 b1 00 	sts	0x00B1, r1	; 0x8000b1 <__TEXT_REGION_LENGTH__+0x7000b1>
- 37a:	08 95       	ret
+ 368:	10 92 b1 00 	sts	0x00B1, r1	; 0x8000b1 <__TEXT_REGION_LENGTH__+0x7000b1>
+ 36c:	08 95       	ret
 
-0000037c <__vector_21>:
+0000036e <__vector_21>:
 	OCR0A  = 250-1;			//1ms tope
 	TIMSK0 = (1<<OCIE0A);	//Habilitando interrupcion
 	sei();					//Habilitando interrupciones gobales
 }
 
 ISR(TIMER0_COMPA_vect){ 
- 37c:	1f 92       	push	r1
- 37e:	0f 92       	push	r0
- 380:	0f b6       	in	r0, 0x3f	; 63
- 382:	0f 92       	push	r0
- 384:	11 24       	eor	r1, r1
- 386:	0b b6       	in	r0, 0x3b	; 59
- 388:	0f 92       	push	r0
- 38a:	2f 93       	push	r18
- 38c:	3f 93       	push	r19
- 38e:	4f 93       	push	r20
- 390:	5f 93       	push	r21
- 392:	6f 93       	push	r22
- 394:	7f 93       	push	r23
- 396:	8f 93       	push	r24
- 398:	9f 93       	push	r25
- 39a:	af 93       	push	r26
- 39c:	bf 93       	push	r27
- 39e:	ef 93       	push	r30
- 3a0:	ff 93       	push	r31
+ 36e:	1f 92       	push	r1
+ 370:	0f 92       	push	r0
+ 372:	0f b6       	in	r0, 0x3f	; 63
+ 374:	0f 92       	push	r0
+ 376:	11 24       	eor	r1, r1
+ 378:	0b b6       	in	r0, 0x3b	; 59
+ 37a:	0f 92       	push	r0
+ 37c:	2f 93       	push	r18
+ 37e:	3f 93       	push	r19
+ 380:	4f 93       	push	r20
+ 382:	5f 93       	push	r21
+ 384:	6f 93       	push	r22
+ 386:	7f 93       	push	r23
+ 388:	8f 93       	push	r24
+ 38a:	9f 93       	push	r25
+ 38c:	af 93       	push	r26
+ 38e:	bf 93       	push	r27
+ 390:	ef 93       	push	r30
+ 392:	ff 93       	push	r31
 	/* 	CÃ³digo para actualizar bandera de segundos */
 	static uint16_t mSeg;
 	mSeg++;
- 3a2:	80 91 b2 03 	lds	r24, 0x03B2	; 0x8003b2 <mSeg.1650>
- 3a6:	90 91 b3 03 	lds	r25, 0x03B3	; 0x8003b3 <mSeg.1650+0x1>
- 3aa:	01 96       	adiw	r24, 0x01	; 1
- 3ac:	90 93 b3 03 	sts	0x03B3, r25	; 0x8003b3 <mSeg.1650+0x1>
- 3b0:	80 93 b2 03 	sts	0x03B2, r24	; 0x8003b2 <mSeg.1650>
+ 394:	80 91 b2 03 	lds	r24, 0x03B2	; 0x8003b2 <mSeg.1650>
+ 398:	90 91 b3 03 	lds	r25, 0x03B3	; 0x8003b3 <mSeg.1650+0x1>
+ 39c:	01 96       	adiw	r24, 0x01	; 1
+ 39e:	90 93 b3 03 	sts	0x03B3, r25	; 0x8003b3 <mSeg.1650+0x1>
+ 3a2:	80 93 b2 03 	sts	0x03B2, r24	; 0x8003b2 <mSeg.1650>
 	
 	/*	Agregar las instrucciones necesarias para reproducir
 		la siguiente nota en el arreglo dependiendo de la duraciÃ³n, 
 		e insertar los silencios entre cada nota. */
 	if(mSeg >= delay)
- 3b4:	20 91 b4 03 	lds	r18, 0x03B4	; 0x8003b4 <delay>
- 3b8:	30 91 b5 03 	lds	r19, 0x03B5	; 0x8003b5 <delay+0x1>
- 3bc:	82 17       	cp	r24, r18
- 3be:	93 07       	cpc	r25, r19
- 3c0:	08 f4       	brcc	.+2      	; 0x3c4 <__vector_21+0x48>
- 3c2:	48 c0       	rjmp	.+144    	; 0x454 <__LOCK_REGION_LENGTH__+0x54>
+ 3a6:	20 91 b4 03 	lds	r18, 0x03B4	; 0x8003b4 <delay>
+ 3aa:	30 91 b5 03 	lds	r19, 0x03B5	; 0x8003b5 <delay+0x1>
+ 3ae:	82 17       	cp	r24, r18
+ 3b0:	93 07       	cpc	r25, r19
+ 3b2:	08 f4       	brcc	.+2      	; 0x3b6 <__vector_21+0x48>
+ 3b4:	48 c0       	rjmp	.+144    	; 0x446 <__LOCK_REGION_LENGTH__+0x46>
 	{
 		mSeg = 0;
- 3c4:	10 92 b3 03 	sts	0x03B3, r1	; 0x8003b3 <mSeg.1650+0x1>
- 3c8:	10 92 b2 03 	sts	0x03B2, r1	; 0x8003b2 <mSeg.1650>
+ 3b6:	10 92 b3 03 	sts	0x03B3, r1	; 0x8003b3 <mSeg.1650+0x1>
+ 3ba:	10 92 b2 03 	sts	0x03B2, r1	; 0x8003b2 <mSeg.1650>
 		if(cambio && cntNota != Fin)
- 3cc:	80 91 00 02 	lds	r24, 0x0200	; 0x800200 <__data_start>
- 3d0:	88 23       	and	r24, r24
- 3d2:	a9 f1       	breq	.+106    	; 0x43e <__LOCK_REGION_LENGTH__+0x3e>
- 3d4:	90 91 b9 03 	lds	r25, 0x03B9	; 0x8003b9 <cntNota>
- 3d8:	80 91 b8 03 	lds	r24, 0x03B8	; 0x8003b8 <Fin>
- 3dc:	98 17       	cp	r25, r24
- 3de:	79 f1       	breq	.+94     	; 0x43e <__LOCK_REGION_LENGTH__+0x3e>
+ 3be:	80 91 00 02 	lds	r24, 0x0200	; 0x800200 <__data_start>
+ 3c2:	88 23       	and	r24, r24
+ 3c4:	a9 f1       	breq	.+106    	; 0x430 <__LOCK_REGION_LENGTH__+0x30>
+ 3c6:	90 91 b9 03 	lds	r25, 0x03B9	; 0x8003b9 <cntNota>
+ 3ca:	80 91 b8 03 	lds	r24, 0x03B8	; 0x8003b8 <Fin>
+ 3ce:	98 17       	cp	r25, r24
+ 3d0:	79 f1       	breq	.+94     	; 0x430 <__LOCK_REGION_LENGTH__+0x30>
 		{
 			Timer2_Freq_Gen(TICKS(cancion[cntNota].freq));
- 3e0:	80 91 b9 03 	lds	r24, 0x03B9	; 0x8003b9 <cntNota>
- 3e4:	e0 91 ba 03 	lds	r30, 0x03BA	; 0x8003ba <cancion>
- 3e8:	f0 91 bb 03 	lds	r31, 0x03BB	; 0x8003bb <cancion+0x1>
- 3ec:	94 e0       	ldi	r25, 0x04	; 4
- 3ee:	89 9f       	mul	r24, r25
- 3f0:	e0 0d       	add	r30, r0
- 3f2:	f1 1d       	adc	r31, r1
- 3f4:	11 24       	eor	r1, r1
- 3f6:	20 81       	ld	r18, Z
- 3f8:	31 81       	ldd	r19, Z+1	; 0x01
- 3fa:	40 e0       	ldi	r20, 0x00	; 0
- 3fc:	50 e0       	ldi	r21, 0x00	; 0
- 3fe:	64 e2       	ldi	r22, 0x24	; 36
- 400:	74 ef       	ldi	r23, 0xF4	; 244
- 402:	80 e0       	ldi	r24, 0x00	; 0
- 404:	90 e0       	ldi	r25, 0x00	; 0
- 406:	74 d2       	rcall	.+1256   	; 0x8f0 <__divmodsi4>
- 408:	82 2f       	mov	r24, r18
- 40a:	93 df       	rcall	.-218    	; 0x332 <Timer2_Freq_Gen>
+ 3d2:	80 91 b9 03 	lds	r24, 0x03B9	; 0x8003b9 <cntNota>
+ 3d6:	e0 91 ba 03 	lds	r30, 0x03BA	; 0x8003ba <cancion>
+ 3da:	f0 91 bb 03 	lds	r31, 0x03BB	; 0x8003bb <cancion+0x1>
+ 3de:	94 e0       	ldi	r25, 0x04	; 4
+ 3e0:	89 9f       	mul	r24, r25
+ 3e2:	e0 0d       	add	r30, r0
+ 3e4:	f1 1d       	adc	r31, r1
+ 3e6:	11 24       	eor	r1, r1
+ 3e8:	20 81       	ld	r18, Z
+ 3ea:	31 81       	ldd	r19, Z+1	; 0x01
+ 3ec:	40 e0       	ldi	r20, 0x00	; 0
+ 3ee:	50 e0       	ldi	r21, 0x00	; 0
+ 3f0:	64 e2       	ldi	r22, 0x24	; 36
+ 3f2:	74 ef       	ldi	r23, 0xF4	; 244
+ 3f4:	80 e0       	ldi	r24, 0x00	; 0
+ 3f6:	90 e0       	ldi	r25, 0x00	; 0
+ 3f8:	7b d2       	rcall	.+1270   	; 0x8f0 <__divmodsi4>
+ 3fa:	82 2f       	mov	r24, r18
+ 3fc:	93 df       	rcall	.-218    	; 0x324 <Timer2_Freq_Gen>
 			cambio = 0;
- 40c:	10 92 00 02 	sts	0x0200, r1	; 0x800200 <__data_start>
+ 3fe:	10 92 00 02 	sts	0x0200, r1	; 0x800200 <__data_start>
 			delay = cancion[cntNota].delay;
- 410:	80 91 b9 03 	lds	r24, 0x03B9	; 0x8003b9 <cntNota>
- 414:	e0 91 ba 03 	lds	r30, 0x03BA	; 0x8003ba <cancion>
- 418:	f0 91 bb 03 	lds	r31, 0x03BB	; 0x8003bb <cancion+0x1>
- 41c:	94 e0       	ldi	r25, 0x04	; 4
- 41e:	89 9f       	mul	r24, r25
- 420:	e0 0d       	add	r30, r0
- 422:	f1 1d       	adc	r31, r1
- 424:	11 24       	eor	r1, r1
- 426:	82 81       	ldd	r24, Z+2	; 0x02
- 428:	93 81       	ldd	r25, Z+3	; 0x03
- 42a:	90 93 b5 03 	sts	0x03B5, r25	; 0x8003b5 <delay+0x1>
- 42e:	80 93 b4 03 	sts	0x03B4, r24	; 0x8003b4 <delay>
+ 402:	80 91 b9 03 	lds	r24, 0x03B9	; 0x8003b9 <cntNota>
+ 406:	e0 91 ba 03 	lds	r30, 0x03BA	; 0x8003ba <cancion>
+ 40a:	f0 91 bb 03 	lds	r31, 0x03BB	; 0x8003bb <cancion+0x1>
+ 40e:	94 e0       	ldi	r25, 0x04	; 4
+ 410:	89 9f       	mul	r24, r25
+ 412:	e0 0d       	add	r30, r0
+ 414:	f1 1d       	adc	r31, r1
+ 416:	11 24       	eor	r1, r1
+ 418:	82 81       	ldd	r24, Z+2	; 0x02
+ 41a:	93 81       	ldd	r25, Z+3	; 0x03
+ 41c:	90 93 b5 03 	sts	0x03B5, r25	; 0x8003b5 <delay+0x1>
+ 420:	80 93 b4 03 	sts	0x03B4, r24	; 0x8003b4 <delay>
 			cntNota++;
- 432:	80 91 b9 03 	lds	r24, 0x03B9	; 0x8003b9 <cntNota>
- 436:	8f 5f       	subi	r24, 0xFF	; 255
- 438:	80 93 b9 03 	sts	0x03B9, r24	; 0x8003b9 <cntNota>
- 43c:	0b c0       	rjmp	.+22     	; 0x454 <__LOCK_REGION_LENGTH__+0x54>
+ 424:	80 91 b9 03 	lds	r24, 0x03B9	; 0x8003b9 <cntNota>
+ 428:	8f 5f       	subi	r24, 0xFF	; 255
+ 42a:	80 93 b9 03 	sts	0x03B9, r24	; 0x8003b9 <cntNota>
+ 42e:	0b c0       	rjmp	.+22     	; 0x446 <__LOCK_REGION_LENGTH__+0x46>
 		}else
 		{
 			cambio = 1;
- 43e:	81 e0       	ldi	r24, 0x01	; 1
- 440:	80 93 00 02 	sts	0x0200, r24	; 0x800200 <__data_start>
+ 430:	81 e0       	ldi	r24, 0x01	; 1
+ 432:	80 93 00 02 	sts	0x0200, r24	; 0x800200 <__data_start>
 			Timer2_Freq_Gen(0);
- 444:	80 e0       	ldi	r24, 0x00	; 0
- 446:	75 df       	rcall	.-278    	; 0x332 <Timer2_Freq_Gen>
+ 436:	80 e0       	ldi	r24, 0x00	; 0
+ 438:	75 df       	rcall	.-278    	; 0x324 <Timer2_Freq_Gen>
 			delay = SILENCE;
- 448:	8a e0       	ldi	r24, 0x0A	; 10
- 44a:	90 e0       	ldi	r25, 0x00	; 0
- 44c:	90 93 b5 03 	sts	0x03B5, r25	; 0x8003b5 <delay+0x1>
- 450:	80 93 b4 03 	sts	0x03B4, r24	; 0x8003b4 <delay>
+ 43a:	8a e0       	ldi	r24, 0x0A	; 10
+ 43c:	90 e0       	ldi	r25, 0x00	; 0
+ 43e:	90 93 b5 03 	sts	0x03B5, r25	; 0x8003b5 <delay+0x1>
+ 442:	80 93 b4 03 	sts	0x03B4, r24	; 0x8003b4 <delay>
 		}
 	}		
 }
- 454:	ff 91       	pop	r31
- 456:	ef 91       	pop	r30
- 458:	bf 91       	pop	r27
- 45a:	af 91       	pop	r26
- 45c:	9f 91       	pop	r25
- 45e:	8f 91       	pop	r24
- 460:	7f 91       	pop	r23
- 462:	6f 91       	pop	r22
- 464:	5f 91       	pop	r21
- 466:	4f 91       	pop	r20
- 468:	3f 91       	pop	r19
- 46a:	2f 91       	pop	r18
- 46c:	0f 90       	pop	r0
- 46e:	0b be       	out	0x3b, r0	; 59
- 470:	0f 90       	pop	r0
- 472:	0f be       	out	0x3f, r0	; 63
- 474:	0f 90       	pop	r0
- 476:	1f 90       	pop	r1
- 478:	18 95       	reti
+ 446:	ff 91       	pop	r31
+ 448:	ef 91       	pop	r30
+ 44a:	bf 91       	pop	r27
+ 44c:	af 91       	pop	r26
+ 44e:	9f 91       	pop	r25
+ 450:	8f 91       	pop	r24
+ 452:	7f 91       	pop	r23
+ 454:	6f 91       	pop	r22
+ 456:	5f 91       	pop	r21
+ 458:	4f 91       	pop	r20
+ 45a:	3f 91       	pop	r19
+ 45c:	2f 91       	pop	r18
+ 45e:	0f 90       	pop	r0
+ 460:	0b be       	out	0x3b, r0	; 59
+ 462:	0f 90       	pop	r0
+ 464:	0f be       	out	0x3f, r0	; 63
+ 466:	0f 90       	pop	r0
+ 468:	1f 90       	pop	r1
+ 46a:	18 95       	reti
 
-0000047a <Timer2_Play>:
+0000046c <Timer2_Play>:
 
 void Timer2_Play(const struct note song[],unsigned int len)
 {	
-	/*	FunciÃ³n que establece las condiciones necesarias para que
+	/*	Función que establece las condiciones necesarias para que
 		el generador recorra el arreglo de notas. */
 	cancion = song;
- 47a:	90 93 bb 03 	sts	0x03BB, r25	; 0x8003bb <cancion+0x1>
- 47e:	80 93 ba 03 	sts	0x03BA, r24	; 0x8003ba <cancion>
+ 46c:	90 93 bb 03 	sts	0x03BB, r25	; 0x8003bb <cancion+0x1>
+ 470:	80 93 ba 03 	sts	0x03BA, r24	; 0x8003ba <cancion>
 	cntNota = 0;				//obteniendo principio de musica
- 482:	10 92 b9 03 	sts	0x03B9, r1	; 0x8003b9 <cntNota>
+ 474:	10 92 b9 03 	sts	0x03B9, r1	; 0x8003b9 <cntNota>
 	Fin = len;			//Obteniendo final de musica
- 486:	60 93 b8 03 	sts	0x03B8, r22	; 0x8003b8 <Fin>
+ 478:	60 93 b8 03 	sts	0x03B8, r22	; 0x8003b8 <Fin>
 	volumen = 50;			//Volumen a la mitad
- 48a:	82 e3       	ldi	r24, 0x32	; 50
- 48c:	90 e0       	ldi	r25, 0x00	; 0
- 48e:	90 93 b7 03 	sts	0x03B7, r25	; 0x8003b7 <volumen+0x1>
- 492:	80 93 b6 03 	sts	0x03B6, r24	; 0x8003b6 <volumen>
+ 47c:	82 e3       	ldi	r24, 0x32	; 50
+ 47e:	90 e0       	ldi	r25, 0x00	; 0
+ 480:	90 93 b7 03 	sts	0x03B7, r25	; 0x8003b7 <volumen+0x1>
+ 484:	80 93 b6 03 	sts	0x03B6, r24	; 0x8003b6 <volumen>
 	DDRH |= (1<<DDH6);
- 496:	e1 e0       	ldi	r30, 0x01	; 1
- 498:	f1 e0       	ldi	r31, 0x01	; 1
- 49a:	80 81       	ld	r24, Z
- 49c:	80 64       	ori	r24, 0x40	; 64
- 49e:	80 83       	st	Z, r24
- 4a0:	08 95       	ret
+ 488:	e1 e0       	ldi	r30, 0x01	; 1
+ 48a:	f1 e0       	ldi	r31, 0x01	; 1
+ 48c:	80 81       	ld	r24, Z
+ 48e:	80 64       	ori	r24, 0x40	; 64
+ 490:	80 83       	st	Z, r24
+ 492:	08 95       	ret
 
-000004a2 <Timer2_Volume>:
+00000494 <Timer2_Volume>:
 
-void Timer2_Volume(int8_t direction){
+void Timer2_Volume(uint8_t direction){
 	static char volumenChar[20];
 	/* 	Ajusta el ciclo de trabajo para incrementar o decrementar  el volumen
 	   	de las notas que se estan generando. */
-	volumen = direction;
- 4a2:	08 2e       	mov	r0, r24
- 4a4:	00 0c       	add	r0, r0
- 4a6:	99 0b       	sbc	r25, r25
+	if(direction > 75)
+ 494:	8c 34       	cpi	r24, 0x4C	; 76
+ 496:	38 f0       	brcs	.+14     	; 0x4a6 <Timer2_Volume+0x12>
+	{
+		volumen = 75;
+ 498:	8b e4       	ldi	r24, 0x4B	; 75
+ 49a:	90 e0       	ldi	r25, 0x00	; 0
+ 49c:	90 93 b7 03 	sts	0x03B7, r25	; 0x8003b7 <volumen+0x1>
+ 4a0:	80 93 b6 03 	sts	0x03B6, r24	; 0x8003b6 <volumen>
+ 4a4:	05 c0       	rjmp	.+10     	; 0x4b0 <Timer2_Volume+0x1c>
+	}else {
+		volumen = direction;	
+ 4a6:	90 e0       	ldi	r25, 0x00	; 0
  4a8:	90 93 b7 03 	sts	0x03B7, r25	; 0x8003b7 <volumen+0x1>
  4ac:	80 93 b6 03 	sts	0x03B6, r24	; 0x8003b6 <volumen>
+	}
 	
 	itoa(volumenChar,volumen,10);
  4b0:	60 91 b6 03 	lds	r22, 0x03B6	; 0x8003b6 <volumen>
