@@ -1,7 +1,7 @@
 Archive member included to satisfy reference by file (symbol)
 
 d:/program files (x86)/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/avr6\libgcc.a(_udivmodhi4.o)
-                              main.o (__udivmodhi4)
+                              ADC.o (__udivmodhi4)
 d:/program files (x86)/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/avr6\libgcc.a(_divmodsi4.o)
                               Timer.o (__divmodsi4)
 d:/program files (x86)/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/avr6\libgcc.a(_negsi2.o)
@@ -9,9 +9,9 @@ d:/program files (x86)/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/
 d:/program files (x86)/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/avr6\libgcc.a(_exit.o)
                               D:/Program Files (x86)/7.0/Packs/atmel/ATmega_DFP/1.2.132/gcc/dev/atmega2560/avr6/crtatmega2560.o (exit)
 d:/program files (x86)/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/avr6\libgcc.a(_copy_data.o)
-                              main.o (__do_copy_data)
+                              ADC.o (__do_copy_data)
 d:/program files (x86)/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/avr6\libgcc.a(_clear_bss.o)
-                              main.o (__do_clear_bss)
+                              ADC.o (__do_clear_bss)
 d:/program files (x86)/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/avr6\libgcc.a(_umulhisi3.o)
                               Timer.o (__umulhisi3)
 d:/program files (x86)/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/avr6\libgcc.a(_udivmodsi4.o)
@@ -28,13 +28,18 @@ Discarded input sections
 
  .data          0x00000000        0x0 D:/Program Files (x86)/7.0/Packs/atmel/ATmega_DFP/1.2.132/gcc/dev/atmega2560/avr6/crtatmega2560.o
  .bss           0x00000000        0x0 D:/Program Files (x86)/7.0/Packs/atmel/ATmega_DFP/1.2.132/gcc/dev/atmega2560/avr6/crtatmega2560.o
+ .text          0x00000000        0x0 ADC.o
+ .data          0x00000000        0x0 ADC.o
+ .bss           0x00000000        0x0 ADC.o
  .text          0x00000000        0x0 main.o
  .data          0x00000000        0x0 main.o
  .bss           0x00000000        0x0 main.o
- .text.Timer2_Set_Volume
-                0x00000000        0x6 main.o
  .rodata.AngelesAzules
                 0x00000000      0x168 main.o
+ .bss.offsetADC
+                0x00000000        0x2 main.o
+ .bss.min       0x00000000        0x2 main.o
+ .bss.max       0x00000000        0x2 main.o
  .text          0x00000000        0x0 Timer.o
  .data          0x00000000        0x0 Timer.o
  .bss           0x00000000        0x0 Timer.o
@@ -177,6 +182,7 @@ Linker script and memory map
 
 Address of section .data set to 0x800200
 LOAD D:/Program Files (x86)/7.0/Packs/atmel/ATmega_DFP/1.2.132/gcc/dev/atmega2560/avr6/crtatmega2560.o
+LOAD ADC.o
 LOAD main.o
 LOAD Timer.o
 LOAD UART0.o
@@ -287,7 +293,7 @@ END GROUP
 .rela.plt
  *(.rela.plt)
 
-.text           0x00000000      0x974
+.text           0x00000000      0x978
  *(.vectors)
  .vectors       0x00000000       0xe4 D:/Program Files (x86)/7.0/Packs/atmel/ATmega_DFP/1.2.132/gcc/dev/atmega2560/avr6/crtatmega2560.o
                 0x00000000                __vector_default
@@ -403,79 +409,82 @@ END GROUP
                 0x00000124                . = ALIGN (0x2)
  *(.text.*)
  .text.ADC_Normalize
-                0x00000124       0x6e main.o
+                0x00000124       0x6e ADC.o
                 0x00000124                ADC_Normalize
  .text.ADC_Read
-                0x00000192       0x2a main.o
+                0x00000192       0x2a ADC.o
                 0x00000192                ADC_Read
- .text.ADC_Ini  0x000001bc       0x70 main.o
+ .text.ADC_Ini  0x000001bc       0x70 ADC.o
                 0x000001bc                ADC_Ini
  .text.ADC_MinMax
-                0x0000022c       0x98 main.o
+                0x0000022c       0x98 ADC.o
                 0x0000022c                ADC_MinMax
- .text.main     0x000002c4       0x30 main.o
-                0x000002c4                main
+ .text.Timer2_Set_Volume
+                0x000002c4        0x4 ADC.o
+                0x000002c4                Timer2_Set_Volume
+ .text.main     0x000002c8       0x30 main.o
+                0x000002c8                main
  .text.Timer0_Ini
-                0x000002f4       0x16 Timer.o
-                0x000002f4                Timer0_Ini
+                0x000002f8       0x16 Timer.o
+                0x000002f8                Timer0_Ini
  .text.Timer2_Freq_Gen
-                0x0000030a       0x4a Timer.o
-                0x0000030a                Timer2_Freq_Gen
+                0x0000030e       0x4a Timer.o
+                0x0000030e                Timer2_Freq_Gen
  .text.__vector_21
-                0x00000354       0xfe Timer.o
-                0x00000354                __vector_21
+                0x00000358       0xfe Timer.o
+                0x00000358                __vector_21
  .text.Timer2_Play
-                0x00000452       0x28 Timer.o
-                0x00000452                Timer2_Play
+                0x00000456       0x28 Timer.o
+                0x00000456                Timer2_Play
  .text.Timer2_Volume
-                0x0000047a       0x3a Timer.o
-                0x0000047a                Timer2_Volume
+                0x0000047e       0x3a Timer.o
+                0x0000047e                Timer2_Volume
  .text.UART0_Ini
-                0x000004b4       0x4a UART0.o
-                0x000004b4                UART0_Ini
+                0x000004b8       0x4a UART0.o
+                0x000004b8                UART0_Ini
  .text.UART0_putchar
-                0x000004fe       0xa0 UART0.o
-                0x000004fe                UART0_putchar
+                0x00000502       0xa0 UART0.o
+                0x00000502                UART0_putchar
  .text.__vector_26
-                0x0000059e       0xba UART0.o
-                0x0000059e                __vector_26
+                0x000005a2       0xba UART0.o
+                0x000005a2                __vector_26
  .text.UART0_available
-                0x00000658       0x2a UART0.o
-                0x00000658                UART0_available
+                0x0000065c       0x2a UART0.o
+                0x0000065c                UART0_available
  .text.UART0_getchar
-                0x00000682       0x76 UART0.o
-                0x00000682                UART0_getchar
+                0x00000686       0x76 UART0.o
+                0x00000686                UART0_getchar
  .text.__vector_25
-                0x000006f8       0x8e UART0.o
-                0x000006f8                __vector_25
+                0x000006fc       0x8e UART0.o
+                0x000006fc                __vector_25
  .text.UART0_puts
-                0x00000786       0x1c UART0.o
-                0x00000786                UART0_puts
- .text.itoa     0x000007a2       0xe0 UART0.o
-                0x000007a2                itoa
+                0x0000078a       0x1c UART0.o
+                0x0000078a                UART0_puts
+ .text.itoa     0x000007a6       0xe0 UART0.o
+                0x000007a6                itoa
  .text.UART0_AutoBaudRate
-                0x00000882       0x2c UART0.o
-                0x00000882                UART0_AutoBaudRate
+                0x00000886       0x2c UART0.o
+                0x00000886                UART0_AutoBaudRate
  .text.libgcc.div
-                0x000008ae       0x28 d:/program files (x86)/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/avr6\libgcc.a(_udivmodhi4.o)
-                0x000008ae                __udivmodhi4
+                0x000008b2       0x28 d:/program files (x86)/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/avr6\libgcc.a(_udivmodhi4.o)
+                0x000008b2                __udivmodhi4
  .text.libgcc.div
-                0x000008d6       0x28 d:/program files (x86)/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/avr6\libgcc.a(_divmodsi4.o)
-                0x000008d6                __divmodsi4
+                0x000008da       0x28 d:/program files (x86)/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/avr6\libgcc.a(_divmodsi4.o)
+                0x000008da                __divmodsi4
  .text.libgcc.div
-                0x000008fe       0x10 d:/program files (x86)/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/avr6\libgcc.a(_negsi2.o)
-                0x000008fe                __negsi2
+                0x00000902       0x10 d:/program files (x86)/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/avr6\libgcc.a(_negsi2.o)
+                0x00000902                __negsi2
  .text.libgcc.mul
-                0x0000090e       0x1e d:/program files (x86)/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/avr6\libgcc.a(_umulhisi3.o)
-                0x0000090e                __umulhisi3
+                0x00000912       0x1e d:/program files (x86)/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/avr6\libgcc.a(_umulhisi3.o)
+                0x00000912                __umulhisi3
  .text.libgcc.div
-                0x0000092c       0x44 d:/program files (x86)/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/avr6\libgcc.a(_udivmodsi4.o)
-                0x0000092c                __udivmodsi4
-                0x00000970                . = ALIGN (0x2)
+                0x00000930       0x44 d:/program files (x86)/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/avr6\libgcc.a(_udivmodsi4.o)
+                0x00000930                __udivmodsi4
+                0x00000974                . = ALIGN (0x2)
  *(.fini9)
- .fini9         0x00000970        0x0 d:/program files (x86)/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/avr6\libgcc.a(_exit.o)
-                0x00000970                _exit
-                0x00000970                exit
+ .fini9         0x00000974        0x0 d:/program files (x86)/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/avr6\libgcc.a(_exit.o)
+                0x00000974                _exit
+                0x00000974                exit
  *(.fini9)
  *(.fini8)
  *(.fini8)
@@ -494,11 +503,11 @@ END GROUP
  *(.fini1)
  *(.fini1)
  *(.fini0)
- .fini0         0x00000970        0x4 d:/program files (x86)/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/avr6\libgcc.a(_exit.o)
+ .fini0         0x00000974        0x4 d:/program files (x86)/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/avr6\libgcc.a(_exit.o)
  *(.fini0)
-                0x00000974                _etext = .
+                0x00000978                _etext = .
 
-.data           0x00800200      0x198 load address 0x00000974
+.data           0x00800200      0x198 load address 0x00000978
                 0x00800200                PROVIDE (__data_start, .)
  *(.data)
  *(.data*)
@@ -506,7 +515,7 @@ END GROUP
  *(.rodata)
  *(.rodata*)
  .rodata.str1.1
-                0x00800201       0x73 main.o
+                0x00800201       0x73 ADC.o
  .rodata.ImperialMarch
                 0x00800274      0x118 main.o
                 0x00800274                ImperialMarch
@@ -522,9 +531,9 @@ END GROUP
  *(.bss)
  *(.bss*)
  .bss.offsetADC
-                0x00800398        0x2 main.o
- .bss.min       0x0080039a        0x2 main.o
- .bss.max       0x0080039c        0x2 main.o
+                0x00800398        0x2 ADC.o
+ .bss.min       0x0080039a        0x2 ADC.o
+ .bss.max       0x0080039c        0x2 ADC.o
  .bss.volumenChar.1661
                 0x0080039e       0x14 Timer.o
  .bss.mSeg.1650
@@ -540,8 +549,8 @@ END GROUP
                 0x008003bc                bufferRx
                 0x008003fe                bufferTx
                 0x00800440                PROVIDE (__bss_end, .)
-                0x00000974                __data_load_start = LOADADDR (.data)
-                0x00000b0c                __data_load_end = (__data_load_start + SIZEOF (.data))
+                0x00000978                __data_load_start = LOADADDR (.data)
+                0x00000b10                __data_load_end = (__data_load_start + SIZEOF (.data))
 
 .noinit         0x00800440        0x0
                 [!provide]                PROVIDE (__noinit_start, .)
@@ -589,8 +598,9 @@ END GROUP
 
 .comment        0x00000000       0x30
  *(.comment)
- .comment       0x00000000       0x30 main.o
+ .comment       0x00000000       0x30 ADC.o
                                  0x31 (size before relaxing)
+ .comment       0x00000030       0x31 main.o
  .comment       0x00000030       0x31 Timer.o
  .comment       0x00000030       0x31 UART0.o
 
@@ -614,60 +624,68 @@ END GROUP
 .debug_sfnames
  *(.debug_sfnames)
 
-.debug_aranges  0x00000000       0xe8
+.debug_aranges  0x00000000      0x100
  *(.debug_aranges)
  .debug_aranges
-                0x00000000       0x48 main.o
+                0x00000000       0x40 ADC.o
  .debug_aranges
-                0x00000048       0x40 Timer.o
+                0x00000040       0x20 main.o
  .debug_aranges
-                0x00000088       0x60 UART0.o
+                0x00000060       0x40 Timer.o
+ .debug_aranges
+                0x000000a0       0x60 UART0.o
 
 .debug_pubnames
  *(.debug_pubnames)
 
-.debug_info     0x00000000     0x1632
+.debug_info     0x00000000     0x16f4
  *(.debug_info .gnu.linkonce.wi.*)
  .debug_info    0x00000000      0xbbc D:/Program Files (x86)/7.0/Packs/atmel/ATmega_DFP/1.2.132/gcc/dev/atmega2560/avr6/crtatmega2560.o
- .debug_info    0x00000bbc      0x55b main.o
- .debug_info    0x00001117      0x2b6 Timer.o
- .debug_info    0x000013cd      0x265 UART0.o
+ .debug_info    0x00000bbc      0x3a2 ADC.o
+ .debug_info    0x00000f5e      0x27b main.o
+ .debug_info    0x000011d9      0x2b6 Timer.o
+ .debug_info    0x0000148f      0x265 UART0.o
 
-.debug_abbrev   0x00000000      0xfcb
+.debug_abbrev   0x00000000     0x1005
  *(.debug_abbrev)
  .debug_abbrev  0x00000000      0xb1a D:/Program Files (x86)/7.0/Packs/atmel/ATmega_DFP/1.2.132/gcc/dev/atmega2560/avr6/crtatmega2560.o
- .debug_abbrev  0x00000b1a      0x1e0 main.o
- .debug_abbrev  0x00000cfa      0x15a Timer.o
- .debug_abbrev  0x00000e54      0x177 UART0.o
+ .debug_abbrev  0x00000b1a      0x11f ADC.o
+ .debug_abbrev  0x00000c39       0xfb main.o
+ .debug_abbrev  0x00000d34      0x15a Timer.o
+ .debug_abbrev  0x00000e8e      0x177 UART0.o
 
-.debug_line     0x00000000      0x886
+.debug_line     0x00000000      0x91d
  *(.debug_line .debug_line.* .debug_line_end)
  .debug_line    0x00000000      0x1f9 D:/Program Files (x86)/7.0/Packs/atmel/ATmega_DFP/1.2.132/gcc/dev/atmega2560/avr6/crtatmega2560.o
- .debug_line    0x000001f9      0x23f main.o
- .debug_line    0x00000438      0x1c5 Timer.o
- .debug_line    0x000005fd      0x289 UART0.o
+ .debug_line    0x000001f9      0x1ec ADC.o
+ .debug_line    0x000003e5       0xea main.o
+ .debug_line    0x000004cf      0x1c5 Timer.o
+ .debug_line    0x00000694      0x289 UART0.o
 
-.debug_frame    0x00000000      0x294
+.debug_frame    0x00000000      0x2a8
  *(.debug_frame)
- .debug_frame   0x00000000       0x9c main.o
- .debug_frame   0x0000009c       0xac Timer.o
- .debug_frame   0x00000148      0x14c UART0.o
+ .debug_frame   0x00000000       0x8c ADC.o
+ .debug_frame   0x0000008c       0x24 main.o
+ .debug_frame   0x000000b0       0xac Timer.o
+ .debug_frame   0x0000015c      0x14c UART0.o
 
-.debug_str      0x00000000      0x70d
+.debug_str      0x00000000      0x718
  *(.debug_str)
  .debug_str     0x00000000      0x3e6 D:/Program Files (x86)/7.0/Packs/atmel/ATmega_DFP/1.2.132/gcc/dev/atmega2560/avr6/crtatmega2560.o
- .debug_str     0x000003e6      0x23c main.o
-                                0x275 (size before relaxing)
- .debug_str     0x00000622       0x76 Timer.o
+ .debug_str     0x000003e6      0x1c6 ADC.o
+                                0x1ff (size before relaxing)
+ .debug_str     0x000005ac       0x81 main.o
+                                0x215 (size before relaxing)
+ .debug_str     0x0000062d       0x76 Timer.o
                                 0x208 (size before relaxing)
- .debug_str     0x00000698       0x75 UART0.o
+ .debug_str     0x000006a3       0x75 UART0.o
                                 0x212 (size before relaxing)
 
-.debug_loc      0x00000000      0x710
+.debug_loc      0x00000000      0x6fd
  *(.debug_loc)
- .debug_loc     0x00000000      0x158 main.o
- .debug_loc     0x00000158      0x184 Timer.o
- .debug_loc     0x000002dc      0x434 UART0.o
+ .debug_loc     0x00000000      0x145 ADC.o
+ .debug_loc     0x00000145      0x184 Timer.o
+ .debug_loc     0x000002c9      0x434 UART0.o
 
 .debug_macinfo
  *(.debug_macinfo)
@@ -687,11 +705,12 @@ END GROUP
 .debug_pubtypes
  *(.debug_pubtypes)
 
-.debug_ranges   0x00000000       0xb8
+.debug_ranges   0x00000000       0xc0
  *(.debug_ranges)
- .debug_ranges  0x00000000       0x38 main.o
- .debug_ranges  0x00000038       0x30 Timer.o
- .debug_ranges  0x00000068       0x50 UART0.o
+ .debug_ranges  0x00000000       0x30 ADC.o
+ .debug_ranges  0x00000030       0x10 main.o
+ .debug_ranges  0x00000040       0x30 Timer.o
+ .debug_ranges  0x00000070       0x50 UART0.o
 
 .debug_macro
  *(.debug_macro)
